@@ -1,4 +1,4 @@
-name = "waf-checker.com"
+name = "waf-checker"
 main = "app/src/api.ts"
 compatibility_date = "2024-03-29"
 [assets]
