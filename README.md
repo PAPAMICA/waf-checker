@@ -19,6 +19,54 @@ This project helps you check how well your Web Application Firewall (WAF) protec
 2. Run `npx wrangler dev`
    ![](./img/1-run.png)
 
+## Deployment
+
+### Prerequisites
+- A Cloudflare account with Workers enabled
+- A Cloudflare API token with the following permissions:
+  - Account: Cloudflare Workers:Edit
+  - Zone: Zone:Read (if using custom domains)
+
+### Setting up API Token
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens)
+2. Create a custom token with "Edit" permissions for Workers
+3. Set the token as an environment variable:
+   ```bash
+   export CLOUDFLARE_API_TOKEN=your_token_here
+   ```
+   Or add it to your `.env` file (make sure `.env` is in `.gitignore`)
+
+### Deploying
+```bash
+npx wrangler deploy
+```
+
+### Troubleshooting Deployment Issues
+
+#### Error 403 Forbidden
+If you encounter a `403 Forbidden` error during deployment:
+
+1. **Check API Token**: Ensure your `CLOUDFLARE_API_TOKEN` is set and valid
+   ```bash
+   echo $CLOUDFLARE_API_TOKEN
+   ```
+
+2. **Verify Token Permissions**: The token needs "Edit" permissions for Cloudflare Workers
+
+3. **Check Account Access**: Ensure your Cloudflare account has Workers enabled (available on Free plan and above)
+
+4. **Verify Worker Name**: The worker name in `wrangler.toml` must be unique. Try changing it if it's already in use:
+   ```toml
+   name = "waf-checker-unique-name"
+   ```
+
+5. **Login to Wrangler**: Try logging in again:
+   ```bash
+   npx wrangler login
+   ```
+
+6. **Check for Conflicting Config**: Ensure there's no conflicting `wrangler.jsonc` file that might override settings
+
 ## Project Structure
 - `app/src/api.ts` — server logic: request handling, payload sending, `/api/check` API
 - `app/src/payloads.ts` — all attack categories and payloads
