@@ -2105,7 +2105,7 @@ function displayHTTPManipulationResults(data) {
 
 			// Determine if bypass occurred based on status code
 			// For HTTP manipulation: 200 = potential bypass, 403 = blocked, others = error/redirect
-			let resultText = 'Blocked';
+			let resultText;
 			let resultBg = 'bg-cyber-success/20 text-cyber-success';
 
 			if (!isError && !isNaN(codeNum)) {
