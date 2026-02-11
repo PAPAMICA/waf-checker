@@ -2953,7 +2953,6 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary, fals
 	const startTimeStr = startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 	const endTimeStr = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 	const duration = Math.round((endDate - startDate) / 1000);
-	const falsePositiveMode = session.settings?.falsePositiveTest || false;
 
 	return `
 <!DOCTYPE html>
