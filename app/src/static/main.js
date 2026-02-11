@@ -56,17 +56,17 @@ function normalizeUrl(url) {
 	if (!url || typeof url !== 'string') {
 		return url;
 	}
-	
+
 	const trimmedUrl = url.trim();
 	if (!trimmedUrl) {
 		return trimmedUrl;
 	}
-	
+
 	// Check if URL already has a scheme (http://, https://, ftp://, etc.)
 	if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmedUrl)) {
 		return trimmedUrl;
 	}
-	
+
 	// Add https:// if no scheme is present
 	return `https://${trimmedUrl}`;
 }
@@ -82,34 +82,38 @@ function showAlert(message, title = 'Information', type = 'info') {
 	const titleEl = document.getElementById('alertTitle');
 	const messageEl = document.getElementById('alertMessage');
 	const iconEl = document.getElementById('alertIcon');
-	
+
 	titleEl.textContent = title;
 	messageEl.textContent = message;
-	
+
 	// Set icon based on type
 	let iconSvg = '';
 	let iconClass = '';
 	switch (type) {
 		case 'success':
 			iconClass = 'bg-cyber-success/20';
-			iconSvg = '<svg class="w-5 h-5 text-cyber-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+			iconSvg =
+				'<svg class="w-5 h-5 text-cyber-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
 			break;
 		case 'error':
 			iconClass = 'bg-cyber-danger/20';
-			iconSvg = '<svg class="w-5 h-5 text-cyber-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+			iconSvg =
+				'<svg class="w-5 h-5 text-cyber-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
 			break;
 		case 'warning':
 			iconClass = 'bg-cyber-warning/20';
-			iconSvg = '<svg class="w-5 h-5 text-cyber-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+			iconSvg =
+				'<svg class="w-5 h-5 text-cyber-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
 			break;
 		default:
 			iconClass = 'bg-cyber-accent/20';
-			iconSvg = '<svg class="w-5 h-5 text-cyber-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+			iconSvg =
+				'<svg class="w-5 h-5 text-cyber-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
 	}
-	
+
 	iconEl.className = `w-10 h-10 rounded-lg flex items-center justify-center ${iconClass}`;
 	iconEl.innerHTML = iconSvg;
-	
+
 	modal.style.display = 'flex';
 	document.body.style.overflow = 'hidden';
 }
@@ -123,16 +127,16 @@ function closeAlert() {
 function showConfirm(message, title = 'Confirm', type = 'warning') {
 	return new Promise((resolve) => {
 		confirmResolve = resolve;
-		
+
 		const modal = document.getElementById('customConfirmModal');
 		const titleEl = document.getElementById('confirmTitle');
 		const messageEl = document.getElementById('confirmMessage');
 		const iconEl = document.getElementById('confirmIcon');
 		const okBtn = document.getElementById('confirmOkBtn');
-		
+
 		titleEl.textContent = title;
 		messageEl.textContent = message;
-		
+
 		// Set icon and button based on type
 		let iconSvg = '';
 		let iconClass = '';
@@ -140,24 +144,27 @@ function showConfirm(message, title = 'Confirm', type = 'warning') {
 		switch (type) {
 			case 'danger':
 				iconClass = 'bg-cyber-danger/20';
-				iconSvg = '<svg class="w-5 h-5 text-cyber-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>';
+				iconSvg =
+					'<svg class="w-5 h-5 text-cyber-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>';
 				btnClass = 'bg-cyber-danger text-white';
 				break;
 			case 'warning':
 				iconClass = 'bg-cyber-warning/20';
-				iconSvg = '<svg class="w-5 h-5 text-cyber-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+				iconSvg =
+					'<svg class="w-5 h-5 text-cyber-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
 				btnClass = 'bg-cyber-warning text-cyber-bg';
 				break;
 			default:
 				iconClass = 'bg-cyber-accent/20';
-				iconSvg = '<svg class="w-5 h-5 text-cyber-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+				iconSvg =
+					'<svg class="w-5 h-5 text-cyber-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
 				btnClass = 'bg-cyber-accent text-cyber-bg';
 		}
-		
+
 		iconEl.className = `w-10 h-10 rounded-lg flex items-center justify-center ${iconClass}`;
 		iconEl.innerHTML = iconSvg;
 		okBtn.className = `px-4 py-2 font-semibold rounded-lg hover:opacity-90 transition-all text-sm ${btnClass}`;
-		
+
 		modal.style.display = 'flex';
 		document.body.style.overflow = 'hidden';
 	});
@@ -167,7 +174,7 @@ function closeConfirm(result) {
 	const modal = document.getElementById('customConfirmModal');
 	modal.style.display = 'none';
 	document.body.style.overflow = '';
-	
+
 	if (confirmResolve) {
 		confirmResolve(result);
 		confirmResolve = null;
@@ -180,28 +187,140 @@ function closeConfirm(result) {
 
 function generateHttpCodesTable(context = 'normal') {
 	const codes = [
-		{ code: '200', name: 'OK', normal: 'Request succeeded - <strong class="text-cyber-danger">VULNERABLE</strong> (attack passed)', falsePositive: '<strong class="text-cyber-success">GOOD</strong> - Legitimate request allowed', httpManip: '<strong class="text-cyber-danger">BYPASS</strong> - Manipulation succeeded, WAF did not block', bg: 'bg-cyber-danger/5' },
-		{ code: '201', name: 'Created', normal: 'Resource created - <strong class="text-cyber-danger">VULNERABLE</strong>', falsePositive: '<strong class="text-cyber-success">GOOD</strong> - Resource created successfully', httpManip: 'Resource created - <strong class="text-cyber-danger">BYPASS</strong>', bg: 'bg-cyber-danger/5' },
-		{ code: '204', name: 'No Content', normal: 'Success with no content - <strong class="text-cyber-danger">VULNERABLE</strong>', falsePositive: '<strong class="text-cyber-success">GOOD</strong> - Request processed successfully', httpManip: 'Success with no content - <strong class="text-cyber-danger">BYPASS</strong>', bg: 'bg-cyber-danger/5' },
-		{ code: '301', name: 'Moved Permanently', normal: 'Permanent redirect - Check if WAF block page or normal redirect', falsePositive: 'Permanent redirect - Check if legitimate or WAF block', httpManip: 'Permanent redirect - Check if WAF block page or normal redirect', bg: 'bg-orange-500/5' },
-		{ code: '302', name: 'Found', normal: 'Temporary redirect - Check Location header for block page', falsePositive: 'Temporary redirect - Investigate if unnecessary', httpManip: 'Temporary redirect - May indicate WAF redirecting to block page', bg: 'bg-orange-500/5' },
-		{ code: '307', name: 'Temporary Redirect', normal: 'Temporary redirect (method preserved) - Investigate', falsePositive: 'Temporary redirect - May be normal or WAF-related', httpManip: 'Temporary redirect (method preserved) - Investigate', bg: 'bg-orange-500/5' },
-		{ code: '308', name: 'Permanent Redirect', normal: 'Permanent redirect (method preserved) - Investigate', falsePositive: 'Permanent redirect - Investigate', httpManip: 'Permanent redirect (method preserved) - Investigate', bg: 'bg-orange-500/5' },
-		{ code: '403', name: 'Forbidden', normal: '<strong class="text-cyber-success">PROTECTED</strong> - WAF blocked the attack', falsePositive: '<strong class="text-cyber-danger">FALSE POSITIVE</strong> - Legitimate request blocked', httpManip: '<strong class="text-cyber-success">PROTECTED</strong> - WAF detected and blocked the manipulation', bg: 'bg-cyber-success/5' },
-		{ code: '404', name: 'Not Found', normal: 'Resource not found - May indicate WAF blocking or normal 404', falsePositive: 'Resource not found - May be normal or WAF blocking', httpManip: 'Resource not found - May indicate WAF blocking', bg: 'bg-orange-500/5' },
-		{ code: '405', name: 'Method Not Allowed', normal: 'HTTP method not allowed - May indicate protection', falsePositive: 'HTTP method not allowed - May indicate over-protection', httpManip: 'HTTP method not allowed - May indicate protection', bg: 'bg-orange-500/5' },
-		{ code: '406', name: 'Not Acceptable', normal: 'Server cannot produce acceptable response - Often WAF-related', falsePositive: 'Server cannot produce acceptable response - Often WAF-related', httpManip: 'Server cannot produce acceptable response - Often WAF-related', bg: 'bg-orange-500/5' },
-		{ code: '429', name: 'Too Many Requests', normal: 'Rate limiting - WAF may be throttling requests', falsePositive: 'Rate limiting - May be too aggressive for legitimate traffic', httpManip: 'Rate limiting - WAF may be throttling manipulation attempts', bg: 'bg-orange-500/5' },
-		{ code: '500', name: 'Internal Server Error', normal: 'Server error - May indicate WAF blocking or application error', falsePositive: 'Server error - May indicate WAF blocking or application issue', httpManip: 'Server error - May indicate WAF blocking or application error', bg: 'bg-orange-500/5' },
-		{ code: '502', name: 'Bad Gateway', normal: 'Gateway error - Network or WAF infrastructure issue', falsePositive: 'Gateway error - Network or infrastructure issue', httpManip: 'Gateway error - Network or infrastructure issue', bg: 'bg-orange-500/5' },
-		{ code: '503', name: 'Service Unavailable', normal: 'Service unavailable - May indicate WAF blocking or maintenance', falsePositive: 'Service unavailable - May indicate WAF blocking or maintenance', httpManip: 'Service unavailable - May indicate WAF blocking or maintenance', bg: 'bg-orange-500/5' },
-		{ code: 'ERR', name: 'Error', normal: 'Network/connection error - Request failed to complete', falsePositive: 'Network/connection error - Request failed to complete', httpManip: 'Network/connection error - Request failed to complete', bg: 'bg-orange-500/5' },
+		{
+			code: '200',
+			name: 'OK',
+			normal: 'Request succeeded - <strong class="text-cyber-danger">VULNERABLE</strong> (attack passed)',
+			falsePositive: '<strong class="text-cyber-success">GOOD</strong> - Legitimate request allowed',
+			httpManip: '<strong class="text-cyber-danger">BYPASS</strong> - Manipulation succeeded, WAF did not block',
+			bg: 'bg-cyber-danger/5',
+		},
+		{
+			code: '201',
+			name: 'Created',
+			normal: 'Resource created - <strong class="text-cyber-danger">VULNERABLE</strong>',
+			falsePositive: '<strong class="text-cyber-success">GOOD</strong> - Resource created successfully',
+			httpManip: 'Resource created - <strong class="text-cyber-danger">BYPASS</strong>',
+			bg: 'bg-cyber-danger/5',
+		},
+		{
+			code: '204',
+			name: 'No Content',
+			normal: 'Success with no content - <strong class="text-cyber-danger">VULNERABLE</strong>',
+			falsePositive: '<strong class="text-cyber-success">GOOD</strong> - Request processed successfully',
+			httpManip: 'Success with no content - <strong class="text-cyber-danger">BYPASS</strong>',
+			bg: 'bg-cyber-danger/5',
+		},
+		{
+			code: '301',
+			name: 'Moved Permanently',
+			normal: 'Permanent redirect - Check if WAF block page or normal redirect',
+			falsePositive: 'Permanent redirect - Check if legitimate or WAF block',
+			httpManip: 'Permanent redirect - Check if WAF block page or normal redirect',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '302',
+			name: 'Found',
+			normal: 'Temporary redirect - Check Location header for block page',
+			falsePositive: 'Temporary redirect - Investigate if unnecessary',
+			httpManip: 'Temporary redirect - May indicate WAF redirecting to block page',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '307',
+			name: 'Temporary Redirect',
+			normal: 'Temporary redirect (method preserved) - Investigate',
+			falsePositive: 'Temporary redirect - May be normal or WAF-related',
+			httpManip: 'Temporary redirect (method preserved) - Investigate',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '308',
+			name: 'Permanent Redirect',
+			normal: 'Permanent redirect (method preserved) - Investigate',
+			falsePositive: 'Permanent redirect - Investigate',
+			httpManip: 'Permanent redirect (method preserved) - Investigate',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '403',
+			name: 'Forbidden',
+			normal: '<strong class="text-cyber-success">PROTECTED</strong> - WAF blocked the attack',
+			falsePositive: '<strong class="text-cyber-danger">FALSE POSITIVE</strong> - Legitimate request blocked',
+			httpManip: '<strong class="text-cyber-success">PROTECTED</strong> - WAF detected and blocked the manipulation',
+			bg: 'bg-cyber-success/5',
+		},
+		{
+			code: '404',
+			name: 'Not Found',
+			normal: 'Resource not found - May indicate WAF blocking or normal 404',
+			falsePositive: 'Resource not found - May be normal or WAF blocking',
+			httpManip: 'Resource not found - May indicate WAF blocking',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '405',
+			name: 'Method Not Allowed',
+			normal: 'HTTP method not allowed - May indicate protection',
+			falsePositive: 'HTTP method not allowed - May indicate over-protection',
+			httpManip: 'HTTP method not allowed - May indicate protection',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '406',
+			name: 'Not Acceptable',
+			normal: 'Server cannot produce acceptable response - Often WAF-related',
+			falsePositive: 'Server cannot produce acceptable response - Often WAF-related',
+			httpManip: 'Server cannot produce acceptable response - Often WAF-related',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '429',
+			name: 'Too Many Requests',
+			normal: 'Rate limiting - WAF may be throttling requests',
+			falsePositive: 'Rate limiting - May be too aggressive for legitimate traffic',
+			httpManip: 'Rate limiting - WAF may be throttling manipulation attempts',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '500',
+			name: 'Internal Server Error',
+			normal: 'Server error - May indicate WAF blocking or application error',
+			falsePositive: 'Server error - May indicate WAF blocking or application issue',
+			httpManip: 'Server error - May indicate WAF blocking or application error',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '502',
+			name: 'Bad Gateway',
+			normal: 'Gateway error - Network or WAF infrastructure issue',
+			falsePositive: 'Gateway error - Network or infrastructure issue',
+			httpManip: 'Gateway error - Network or infrastructure issue',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: '503',
+			name: 'Service Unavailable',
+			normal: 'Service unavailable - May indicate WAF blocking or maintenance',
+			falsePositive: 'Service unavailable - May indicate WAF blocking or maintenance',
+			httpManip: 'Service unavailable - May indicate WAF blocking or maintenance',
+			bg: 'bg-orange-500/5',
+		},
+		{
+			code: 'ERR',
+			name: 'Error',
+			normal: 'Network/connection error - Request failed to complete',
+			falsePositive: 'Network/connection error - Request failed to complete',
+			httpManip: 'Network/connection error - Request failed to complete',
+			bg: 'bg-orange-500/5',
+		},
 	];
 
 	const contextLabels = {
 		normal: 'WAF Context',
 		falsePositive: 'False Positive Context',
-		httpManip: 'HTTP Manipulation Context'
+		httpManip: 'HTTP Manipulation Context',
 	};
 
 	let html = `<table class="w-full text-xs border-collapse">
@@ -216,10 +335,13 @@ function generateHttpCodesTable(context = 'normal') {
 
 	codes.forEach((item) => {
 		const meaning = item[context] || item.normal;
-		const codeColor = item.code === '403' ? 'text-cyber-success' : 
-		                 (item.code === '200' || item.code === '201' || item.code === '204') ? 'text-cyber-danger' : 
-		                 'text-orange-400';
-		
+		const codeColor =
+			item.code === '403'
+				? 'text-cyber-success'
+				: item.code === '200' || item.code === '201' || item.code === '204'
+					? 'text-cyber-danger'
+					: 'text-orange-400';
+
 		html += `<tr class="${item.bg}">
 			<td class="px-3 py-2 border border-cyber-accent/20 font-mono font-bold ${codeColor}">${item.code}</td>
 			<td class="px-3 py-2 border border-cyber-accent/20">${item.name}</td>
@@ -235,16 +357,16 @@ function showHttpCodesModal(context = 'normal') {
 	const modal = document.getElementById('httpCodesModal');
 	const titleEl = document.getElementById('httpCodesTitle');
 	const contentEl = document.getElementById('httpCodesTableContent');
-	
+
 	const contextTitles = {
 		normal: 'HTTP Status Codes Reference - Security Test',
 		falsePositive: 'HTTP Status Codes Reference - False Positive Test',
-		httpManip: 'HTTP Status Codes Reference - HTTP Manipulation Test'
+		httpManip: 'HTTP Status Codes Reference - HTTP Manipulation Test',
 	};
-	
+
 	titleEl.textContent = contextTitles[context] || contextTitles.normal;
 	contentEl.innerHTML = generateHttpCodesTable(context);
-	
+
 	modal.style.display = 'flex';
 	document.body.style.overflow = 'hidden';
 }
@@ -260,7 +382,7 @@ document.addEventListener('keydown', (e) => {
 	if (e.key === 'Escape') {
 		const alertModal = document.getElementById('customAlertModal');
 		const confirmModal = document.getElementById('customConfirmModal');
-		
+
 		if (alertModal && alertModal.style.display === 'flex') {
 			closeAlert();
 		}
@@ -277,9 +399,9 @@ function getStatusClass(status, is_redirect, falsePositiveMode = false) {
 	if (!isNaN(codeNum) && (is_redirect || codeNum === 405)) return 'status-redirect';
 
 	if (falsePositiveMode) {
-		// In false positive mode: 200 = good (green), 403 = bad (red)
-		if (!isNaN(codeNum) && ((codeNum >= 200 && codeNum < 300) || (codeNum >= 500 && codeNum < 600))) return 'status-green';
-		if (codeNum === 403) return 'status-red';
+		// In false positive mode: 2xx = good (green), 403 = bad (red), 5xx = bad
+		if (!isNaN(codeNum) && codeNum >= 200 && codeNum < 300) return 'status-green';
+		if (codeNum === 403 || (!isNaN(codeNum) && codeNum >= 500 && codeNum < 600)) return 'status-red';
 	} else {
 		// Normal mode: 403 = good (green), 200 = bad (red)
 		if (codeNum === 403) return 'status-green';
@@ -294,15 +416,23 @@ function renderAnalyticsCards(results, falsePositiveMode = false) {
 	if (!results || !results.length) return '';
 
 	const totalTests = results.length;
-	const bypassedTests = results.filter(r => {
+	const bypassedTests = results.filter((r) => {
 		const s = parseInt(String(r.status), 10);
+		if (falsePositiveMode) {
+			// In FP mode: 403 = false positive (bad)
+			return s === 403;
+		}
+		// Normal mode: 200/500 = bypassed (bad)
 		return s === 200 || s === 500;
 	}).length;
 	const bypassRate = totalTests > 0 ? (bypassedTests / totalTests) * 100 : 0;
 	const wafEffectiveness = Math.max(0, 100 - bypassRate);
 
 	// Response time stats
-	let totalTime = 0, slowCount = 0, minTime = Infinity, maxTime = 0;
+	let totalTime = 0,
+		slowCount = 0,
+		minTime = Infinity,
+		maxTime = 0;
 	for (const r of results) {
 		const rt = r.responseTime || 0;
 		totalTime += rt;
@@ -321,10 +451,10 @@ function renderAnalyticsCards(results, falsePositiveMode = false) {
 	else riskLevel = 'Low';
 
 	const riskColors = {
-		'Critical': 'bg-cyber-danger/15 border-cyber-danger/30 text-cyber-danger',
-		'High': 'bg-cyber-warning/15 border-cyber-warning/30 text-cyber-warning',
-		'Medium': 'bg-blue-500/15 border-blue-500/30 text-blue-400',
-		'Low': 'bg-cyber-success/15 border-cyber-success/30 text-cyber-success',
+		Critical: 'bg-cyber-danger/15 border-cyber-danger/30 text-cyber-danger',
+		High: 'bg-cyber-warning/15 border-cyber-warning/30 text-cyber-warning',
+		Medium: 'bg-blue-500/15 border-blue-500/30 text-blue-400',
+		Low: 'bg-cyber-success/15 border-cyber-success/30 text-cyber-success',
 	};
 	const riskStyle = riskColors[riskLevel] || riskColors['Low'];
 
@@ -341,11 +471,11 @@ function renderAnalyticsCards(results, falsePositiveMode = false) {
 		</div>
 		<div class="bg-cyber-card border ${bypassedTests > 0 ? 'border-cyber-danger/30' : 'border-cyber-success/30'} rounded-xl p-4 text-center">
 			<div class="text-2xl font-bold ${bypassedTests > 0 ? 'text-cyber-danger' : 'text-cyber-success'} mb-1">${bypassedTests}</div>
-			<div class="text-[10px] text-gray-400 uppercase tracking-wider">Bypassed</div>
+			<div class="text-[10px] text-gray-400 uppercase tracking-wider">${falsePositiveMode ? 'False Positives' : 'Bypassed'}</div>
 		</div>
 		<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl p-4 text-center">
 			<div class="text-2xl font-bold ${wafEffectiveness < 75 ? 'text-cyber-warning' : 'text-cyber-success'} mb-1">${Math.round(wafEffectiveness)}%</div>
-			<div class="text-[10px] text-gray-400 uppercase tracking-wider">WAF Effectiveness</div>
+			<div class="text-[10px] text-gray-400 uppercase tracking-wider">${falsePositiveMode ? 'WAF Accuracy' : 'WAF Effectiveness'}</div>
 		</div>
 		<div class="bg-cyber-card border ${riskStyle} rounded-xl p-4 text-center">
 			<div class="text-lg font-bold mb-1">${riskLevel}</div>
@@ -365,7 +495,7 @@ function renderAnalyticsCards(results, falsePositiveMode = false) {
 		</div>
 		<div class="bg-cyber-card border ${slowCount > 0 ? 'border-orange-500/30' : 'border-gray-500/20'} rounded-xl p-2 text-center">
 			<div class="text-base font-bold ${slowCount > 0 ? 'text-orange-400' : 'text-gray-500'} font-mono">${slowCount}</div>
-			<div class="text-[9px] text-gray-400 uppercase tracking-wide">Slow (>${SLOW_RESPONSE_THRESHOLD/1000}s)</div>
+			<div class="text-[9px] text-gray-400 uppercase tracking-wide">Slow (>${SLOW_RESPONSE_THRESHOLD / 1000}s)</div>
 		</div>
 	</div>`;
 }
@@ -392,7 +522,13 @@ function renderSummary(results, falsePositiveMode = false) {
 	if (minTime === Infinity) minTime = 0;
 
 	// Test analytics
-	const bypassedTests = results.filter(r => { const s = parseInt(String(r.status), 10); return s === 200 || s === 500; }).length;
+	const bypassedTests = results.filter((r) => {
+		const s = parseInt(String(r.status), 10);
+		if (falsePositiveMode) {
+			return s === 403;
+		}
+		return s === 200 || s === 500;
+	}).length;
 	const bypassRate = totalRequests > 0 ? (bypassedTests / totalRequests) * 100 : 0;
 	const wafEffectiveness = Math.max(0, 100 - bypassRate);
 	let riskLevel;
@@ -402,19 +538,26 @@ function renderSummary(results, falsePositiveMode = false) {
 	else riskLevel = 'Low';
 
 	const riskColors = {
-		'Critical': 'bg-cyber-danger/15 border-cyber-danger/30 text-cyber-danger',
-		'High': 'bg-cyber-warning/15 border-cyber-warning/30 text-cyber-warning',
-		'Medium': 'bg-blue-500/15 border-blue-500/30 text-blue-400',
-		'Low': 'bg-cyber-success/15 border-cyber-success/30 text-cyber-success',
+		Critical: 'bg-cyber-danger/15 border-cyber-danger/30 text-cyber-danger',
+		High: 'bg-cyber-warning/15 border-cyber-warning/30 text-cyber-warning',
+		Medium: 'bg-blue-500/15 border-blue-500/30 text-blue-400',
+		Low: 'bg-cyber-success/15 border-cyber-success/30 text-cyber-success',
 	};
 	const riskStyle = riskColors[riskLevel] || riskColors['Low'];
 
 	// Avg time color
 	let avgColor = 'text-cyber-success';
 	let avgBg = 'bg-cyber-success/15 border-cyber-success/30';
-	if (avgTime >= SLOW_RESPONSE_THRESHOLD) { avgColor = 'text-red-400'; avgBg = 'bg-red-500/15 border-red-500/30'; }
-	else if (avgTime >= 1000) { avgColor = 'text-orange-400'; avgBg = 'bg-orange-500/15 border-orange-500/30'; }
-	else if (avgTime >= 500) { avgColor = 'text-yellow-400'; avgBg = 'bg-yellow-500/15 border-yellow-500/30'; }
+	if (avgTime >= SLOW_RESPONSE_THRESHOLD) {
+		avgColor = 'text-red-400';
+		avgBg = 'bg-red-500/15 border-red-500/30';
+	} else if (avgTime >= 1000) {
+		avgColor = 'text-orange-400';
+		avgBg = 'bg-orange-500/15 border-orange-500/30';
+	} else if (avgTime >= 500) {
+		avgColor = 'text-yellow-400';
+		avgBg = 'bg-yellow-500/15 border-yellow-500/30';
+	}
 
 	let html = `<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl p-4 mb-4">
 		<div class="flex items-center justify-between mb-3">
@@ -430,7 +573,7 @@ function renderSummary(results, falsePositiveMode = false) {
 			</div>
 			<div class="p-2.5 rounded-lg border bg-cyber-accent/10 border-cyber-accent/20 text-center">
 				<div class="text-lg font-bold ${wafEffectiveness < 75 ? 'text-cyber-warning' : 'text-cyber-success'} font-mono">${Math.round(wafEffectiveness)}%</div>
-				<div class="text-[10px] text-gray-400 uppercase tracking-wide">WAF Effectiveness</div>
+				<div class="text-[10px] text-gray-400 uppercase tracking-wide">${falsePositiveMode ? 'WAF Accuracy' : 'WAF Effectiveness'}</div>
 			</div>
 			<div class="p-2.5 rounded-lg border bg-cyber-elevated/50 border-gray-600/30 text-center">
 				<div class="text-lg font-bold text-white font-mono">${totalRequests}</div>
@@ -438,7 +581,7 @@ function renderSummary(results, falsePositiveMode = false) {
 			</div>
 			<div class="p-2.5 rounded-lg border ${bypassedTests > 0 ? 'bg-cyber-danger/15 border-cyber-danger/30' : 'bg-cyber-success/15 border-cyber-success/30'} text-center">
 				<div class="text-lg font-bold ${bypassedTests > 0 ? 'text-cyber-danger' : 'text-cyber-success'} font-mono">${bypassedTests}</div>
-				<div class="text-[10px] text-gray-400 uppercase tracking-wide">Bypassed</div>
+				<div class="text-[10px] text-gray-400 uppercase tracking-wide">${falsePositiveMode ? 'False Positives' : 'Bypassed'}</div>
 			</div>
 		</div>
 		<div class="grid grid-cols-4 gap-2 mb-3">
@@ -456,7 +599,7 @@ function renderSummary(results, falsePositiveMode = false) {
 			</div>
 			<div class="p-1.5 rounded-lg border ${slowRequestCount > 0 ? 'bg-orange-500/15 border-orange-500/30' : 'bg-gray-500/10 border-gray-500/20'} text-center">
 				<div class="text-sm font-bold ${slowRequestCount > 0 ? 'text-orange-400' : 'text-gray-500'} font-mono">${slowRequestCount}</div>
-				<div class="text-[9px] text-gray-400 uppercase tracking-wide">Slow (>${SLOW_RESPONSE_THRESHOLD/1000}s)</div>
+				<div class="text-[9px] text-gray-400 uppercase tracking-wide">Slow (>${SLOW_RESPONSE_THRESHOLD / 1000}s)</div>
 			</div>
 		</div>
 
@@ -468,7 +611,7 @@ function renderSummary(results, falsePositiveMode = false) {
 				<span class="text-xs font-semibold text-white">All</span>
 				<span class="px-1.5 py-0.5 bg-cyber-accent/20 text-cyber-accent text-[10px] font-bold rounded">${totalRequests}</span>
 			</label>`;
-	
+
 	const sortedCodes = Object.keys(statusCounter).sort();
 	for (const code of sortedCodes) {
 		const percent = totalRequests ? (statusCounter[code] / totalRequests) * 100 : 0;
@@ -477,19 +620,53 @@ function renderSummary(results, falsePositiveMode = false) {
 		let textClass = 'text-gray-400';
 		let dotColor = 'bg-gray-400';
 		let pillBg = 'bg-gray-500/15 border-gray-500/30';
-		
+
 		if (falsePositiveMode) {
-			if (codeNum >= 200 && codeNum < 300) { colorClass = 'bg-cyber-success'; textClass = 'text-cyber-success'; dotColor = 'bg-cyber-success'; pillBg = 'bg-cyber-success/10 border-cyber-success/30'; }
-			else if (codeNum === 403) { colorClass = 'bg-cyber-danger'; textClass = 'text-cyber-danger'; dotColor = 'bg-cyber-danger'; pillBg = 'bg-cyber-danger/10 border-cyber-danger/30'; }
-			else if (codeNum >= 300 && codeNum < 400) { colorClass = 'bg-orange-500'; textClass = 'text-orange-400'; dotColor = 'bg-orange-400'; pillBg = 'bg-orange-500/10 border-orange-500/30'; }
-			else if (codeNum >= 400 && codeNum < 500) { colorClass = 'bg-cyber-warning'; textClass = 'text-cyber-warning'; dotColor = 'bg-cyber-warning'; pillBg = 'bg-cyber-warning/10 border-cyber-warning/30'; }
+			if (codeNum >= 200 && codeNum < 300) {
+				colorClass = 'bg-cyber-success';
+				textClass = 'text-cyber-success';
+				dotColor = 'bg-cyber-success';
+				pillBg = 'bg-cyber-success/10 border-cyber-success/30';
+			} else if (codeNum === 403) {
+				colorClass = 'bg-cyber-danger';
+				textClass = 'text-cyber-danger';
+				dotColor = 'bg-cyber-danger';
+				pillBg = 'bg-cyber-danger/10 border-cyber-danger/30';
+			} else if (codeNum >= 300 && codeNum < 400) {
+				colorClass = 'bg-orange-500';
+				textClass = 'text-orange-400';
+				dotColor = 'bg-orange-400';
+				pillBg = 'bg-orange-500/10 border-orange-500/30';
+			} else if (codeNum >= 400 && codeNum < 500) {
+				colorClass = 'bg-cyber-warning';
+				textClass = 'text-cyber-warning';
+				dotColor = 'bg-cyber-warning';
+				pillBg = 'bg-cyber-warning/10 border-cyber-warning/30';
+			}
 		} else {
-			if (codeNum === 403) { colorClass = 'bg-cyber-success'; textClass = 'text-cyber-success'; dotColor = 'bg-cyber-success'; pillBg = 'bg-cyber-success/10 border-cyber-success/30'; }
-			else if (codeNum >= 200 && codeNum < 300) { colorClass = 'bg-cyber-danger'; textClass = 'text-cyber-danger'; dotColor = 'bg-cyber-danger'; pillBg = 'bg-cyber-danger/10 border-cyber-danger/30'; }
-			else if (codeNum >= 300 && codeNum < 400) { colorClass = 'bg-orange-500'; textClass = 'text-orange-400'; dotColor = 'bg-orange-400'; pillBg = 'bg-orange-500/10 border-orange-500/30'; }
-			else if (codeNum >= 400 && codeNum < 500) { colorClass = 'bg-cyber-warning'; textClass = 'text-cyber-warning'; dotColor = 'bg-cyber-warning'; pillBg = 'bg-cyber-warning/10 border-cyber-warning/30'; }
+			if (codeNum === 403) {
+				colorClass = 'bg-cyber-success';
+				textClass = 'text-cyber-success';
+				dotColor = 'bg-cyber-success';
+				pillBg = 'bg-cyber-success/10 border-cyber-success/30';
+			} else if (codeNum >= 200 && codeNum < 300) {
+				colorClass = 'bg-cyber-danger';
+				textClass = 'text-cyber-danger';
+				dotColor = 'bg-cyber-danger';
+				pillBg = 'bg-cyber-danger/10 border-cyber-danger/30';
+			} else if (codeNum >= 300 && codeNum < 400) {
+				colorClass = 'bg-orange-500';
+				textClass = 'text-orange-400';
+				dotColor = 'bg-orange-400';
+				pillBg = 'bg-orange-500/10 border-orange-500/30';
+			} else if (codeNum >= 400 && codeNum < 500) {
+				colorClass = 'bg-cyber-warning';
+				textClass = 'text-cyber-warning';
+				dotColor = 'bg-cyber-warning';
+				pillBg = 'bg-cyber-warning/10 border-cyber-warning/30';
+			}
 		}
-		
+
 		html += `
 			<label class="inline-flex items-center gap-2 px-3 py-1.5 ${pillBg} rounded-lg cursor-pointer hover:brightness-125 transition-all border">
 				<input type="checkbox" class="status-filter-checkbox w-3.5 h-3.5 accent-cyber-accent shrink-0" data-status="${code}" checked />
@@ -499,7 +676,7 @@ function renderSummary(results, falsePositiveMode = false) {
 				<span class="px-1.5 py-0.5 ${colorClass}/20 ${textClass} text-[10px] font-bold rounded">${statusCounter[code]}</span>
 			</label>`;
 	}
-	
+
 	html += `</div></div>`;
 	return html;
 }
@@ -515,69 +692,65 @@ function renderResultRow(r, falsePositiveMode = false) {
 	let payloadClass = '';
 	let rowBgColor = '';
 	let borderColor = '';
-	
+
 	if (isError || isNaN(codeNum)) {
 		statusBg = 'bg-orange-500/20 text-orange-400';
 		rowBgColor = 'rgba(249, 115, 22, 0.2)';
 		borderColor = '#f97316';
 	} else if (falsePositiveMode) {
-		if (codeNum >= 200 && codeNum < 300) { 
-			statusBg = 'bg-cyber-success/20 text-cyber-success'; 
+		if (codeNum >= 200 && codeNum < 300) {
+			statusBg = 'bg-cyber-success/20 text-cyber-success';
 			payloadClass = 'text-cyber-success';
 			rowBgColor = 'rgba(34, 197, 94, 0.2)';
 			borderColor = '#22c55e';
-		}
-		else if (codeNum === 403) { 
+		} else if (codeNum === 403) {
 			statusBg = 'bg-cyber-danger/20 text-cyber-danger';
 			rowBgColor = 'rgba(239, 68, 68, 0.2)';
 			borderColor = '#ef4444';
-		}
-		else if (codeNum >= 300 && codeNum < 400) { 
+		} else if (codeNum >= 300 && codeNum < 400) {
 			statusBg = 'bg-cyber-warning/20 text-cyber-warning';
 			rowBgColor = 'rgba(249, 115, 22, 0.2)';
 			borderColor = '#f97316';
-		}
-		else if (codeNum >= 400 && codeNum < 500 && codeNum !== 403) { 
+		} else if (codeNum >= 400 && codeNum < 500 && codeNum !== 403) {
 			statusBg = 'bg-cyber-warning/20 text-cyber-warning';
 			rowBgColor = 'rgba(249, 115, 22, 0.2)';
 			borderColor = '#f97316';
-		}
-		else {
+		} else if (codeNum >= 500 && codeNum < 600) {
+			statusBg = 'bg-cyber-danger/20 text-cyber-danger';
+			rowBgColor = 'rgba(239, 68, 68, 0.2)';
+			borderColor = '#ef4444';
+		} else {
 			rowBgColor = 'rgba(107, 114, 128, 0.1)';
 			borderColor = '#6b7280';
 		}
 	} else {
-		if (codeNum === 403) { 
-			statusBg = 'bg-cyber-success/20 text-cyber-success'; 
+		if (codeNum === 403) {
+			statusBg = 'bg-cyber-success/20 text-cyber-success';
 			payloadClass = 'text-cyber-success';
 			rowBgColor = 'rgba(34, 197, 94, 0.2)';
 			borderColor = '#22c55e';
-		}
-		else if (codeNum >= 200 && codeNum < 300) { 
+		} else if (codeNum >= 200 && codeNum < 300) {
 			statusBg = 'bg-cyber-danger/20 text-cyber-danger';
 			rowBgColor = 'rgba(239, 68, 68, 0.2)';
 			borderColor = '#ef4444';
-		}
-		else if (codeNum >= 300 && codeNum < 400) { 
+		} else if (codeNum >= 300 && codeNum < 400) {
 			statusBg = 'bg-cyber-warning/20 text-cyber-warning';
 			rowBgColor = 'rgba(249, 115, 22, 0.2)';
 			borderColor = '#f97316';
-		}
-		else if (codeNum >= 400 && codeNum < 500 && codeNum !== 403) { 
+		} else if (codeNum >= 400 && codeNum < 500 && codeNum !== 403) {
 			statusBg = 'bg-cyber-warning/20 text-cyber-warning';
 			rowBgColor = 'rgba(249, 115, 22, 0.2)';
 			borderColor = '#f97316';
-		}
-		else {
+		} else {
 			rowBgColor = 'rgba(107, 114, 128, 0.1)';
 			borderColor = '#6b7280';
 		}
 	}
-	
+
 	const responseTime = r.responseTime || 0;
 	const isSlow = responseTime >= SLOW_RESPONSE_THRESHOLD;
 	const rowStyle = `background-color: ${rowBgColor}; border-left: 4px solid ${borderColor};`;
-	
+
 	let statusTooltip = '';
 	let statusDisplay = r.status;
 	if (!isError && !isNaN(codeNum) && codeNum >= 300 && codeNum < 400) {
@@ -592,7 +765,7 @@ function renderResultRow(r, falsePositiveMode = false) {
 	} else {
 		timeHtml = `${responseTime}ms`;
 	}
-	
+
 	return `
 		<tr data-status="${r.status}" style="${rowStyle}" class="hover:brightness-110 transition-all">
 			<td class="px-4 py-2.5 text-gray-300">${escapeHtml(r.category)}</td>
@@ -664,13 +837,13 @@ function renderReportHeader(falsePositiveMode = false) {
 			</table>
 		</div>
 	</div>`;
-	
+
 	return html;
 }
 
 function renderReport(results, falsePositiveMode = false) {
 	if (!results || results.length === 0) return '';
-	
+
 	let html = '';
 
 	// Add visual indicator for test mode with explanation
@@ -707,7 +880,7 @@ function renderReport(results, falsePositiveMode = false) {
 		</div>
 		<div class="mb-4 p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
 			<p class="text-xs text-gray-300 leading-relaxed">
-				<strong class="text-blue-400">What is a False Positive Test?</strong> This test uses <strong class="text-white">legitimate, safe payloads</strong> to check if your WAF is blocking normal traffic. 
+				<strong class="text-blue-400">What is a False Positive Test?</strong> This test uses <strong class="text-white">legitimate, safe payloads</strong> to check if your WAF is blocking normal traffic.
 				If you see <strong class="text-cyber-danger">403 (red)</strong>, it means legitimate requests are being blocked - this is a <strong class="text-cyber-danger">false positive</strong> and should be investigated.
 				<strong class="text-orange-400">Status 3xx (orange)</strong> means the server redirected the request. This could be a normal redirect or the WAF redirecting to a block page. Check the redirect location to determine if legitimate traffic is being redirected unnecessarily.
 			</p>
@@ -745,8 +918,8 @@ function renderReport(results, falsePositiveMode = false) {
 		</div>
 		<div class="mb-4 p-3 bg-cyber-accent/5 border border-cyber-accent/20 rounded-lg">
 			<p class="text-xs text-gray-300 leading-relaxed">
-				<strong class="text-cyber-accent">What are these tests?</strong> This test sends <strong class="text-white">malicious payloads</strong> (SQL Injection, XSS, etc.) to check if your WAF blocks them. 
-				<strong class="text-cyber-success">Status 403 (green)</strong> means the WAF detected and blocked the attack. 
+				<strong class="text-cyber-accent">What are these tests?</strong> This test sends <strong class="text-white">malicious payloads</strong> (SQL Injection, XSS, etc.) to check if your WAF blocks them.
+				<strong class="text-cyber-success">Status 403 (green)</strong> means the WAF detected and blocked the attack.
 				<strong class="text-cyber-danger">Status 200 (red)</strong> means the attack succeeded - your application is <strong class="text-cyber-danger">vulnerable</strong> and the WAF did not protect it.
 				<strong class="text-orange-400">Status 3xx (orange)</strong> means the server redirected the request. This could indicate the WAF is redirecting to a block page (good), or the server is redirecting normally (requires investigation). Check the redirect location to determine if it's a block page or a normal redirect.
 			</p>
@@ -765,7 +938,7 @@ function renderReport(results, falsePositiveMode = false) {
 	}
 
 	html += renderSummary(results, falsePositiveMode);
-	
+
 	// Results table with modern design
 	html += `<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl overflow-hidden">
 		<div class="overflow-x-auto">
@@ -780,13 +953,13 @@ function renderReport(results, falsePositiveMode = false) {
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-cyber-accent/10">`;
-	
+
 	for (const r of results) {
 		html += renderResultRow(r, falsePositiveMode);
 	}
-	
+
 	html += `</tbody></table></div></div>`;
-	
+
 	setTimeout(() => {
 		filterResultsTableByStatus();
 		const all = document.querySelectorAll('.status-filter-checkbox');
@@ -817,33 +990,33 @@ async function loadPayloadCategories() {
 		// Check loading status first
 		const statusResp = await fetch('/api/payloads/status');
 		const status = await statusResp.json();
-		
+
 		if (!status.loaded) {
 			// Wait a bit and retry - backend is still loading from GitHub
-			await new Promise(r => setTimeout(r, 2000));
+			await new Promise((r) => setTimeout(r, 2000));
 		}
-		
+
 		const resp = await fetch('/api/payloads');
 		if (!resp.ok) throw new Error(`Failed to load payloads (HTTP ${resp.status})`);
 		const data = await resp.json();
-		
+
 		if (!data || Object.keys(data).length === 0) {
 			throw new Error('Empty payload data received');
 		}
-		
+
 		PAYLOAD_CATEGORIES = Object.keys(data);
 		payloadCategoriesLoaded = true;
 		payloadLoadRetries = 0;
 		console.log(`Loaded ${PAYLOAD_CATEGORIES.length} payload categories from GitHub`);
 		renderCategoryCheckboxes();
-		
+
 		// Update loading indicator with success
 		const indicator = document.getElementById('payloadLoadingIndicator');
 		if (indicator) indicator.remove();
 	} catch (e) {
 		console.error('Failed to load payload categories:', e);
 		payloadLoadRetries++;
-		
+
 		if (payloadLoadRetries <= PAYLOAD_MAX_AUTO_RETRIES) {
 			// Auto-retry with increasing delay
 			const delay = payloadLoadRetries * 2000;
@@ -869,7 +1042,7 @@ function showPayloadLoadError(errorMsg) {
 		</svg>
 		<p class="text-xs text-cyber-danger font-semibold mb-1">Failed to load payloads</p>
 		<p class="text-[10px] text-gray-500 mb-3">${errorMsg || 'Connection to GitHub failed'}</p>
-		<button type="button" onclick="retryLoadPayloads()" 
+		<button type="button" onclick="retryLoadPayloads()"
 				class="px-4 py-2 bg-cyber-accent/20 border border-cyber-accent/40 rounded-lg text-xs font-bold text-cyber-accent hover:bg-cyber-accent/30 transition-all">
 			<svg class="w-3.5 h-3.5 inline-block mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -890,7 +1063,7 @@ function renderCategoryCheckboxes() {
 	// Remove loading indicator if present
 	const indicator = document.getElementById('payloadLoadingIndicator');
 	if (indicator) indicator.remove();
-	
+
 	if (PAYLOAD_CATEGORIES.length === 0) {
 		container.innerHTML = '<div class="text-center py-3 text-gray-400">No categories loaded yet...</div>';
 		return;
@@ -956,9 +1129,9 @@ function switchConfigTab(tab) {
 	const tabAdvanced = document.getElementById('tabAdvanced');
 	const panelTarget = document.getElementById('panelTarget');
 	const panelAdvanced = document.getElementById('panelAdvanced');
-	
+
 	if (!tabTarget || !tabAdvanced || !panelTarget || !panelAdvanced) return;
-	
+
 	if (tab === 'target') {
 		// Activate Target tab
 		tabTarget.classList.add('border-cyber-accent', 'text-cyber-accent');
@@ -1028,16 +1201,16 @@ function stopIndeterminateProgress() {
 
 function updateProgress(current, total, category = '', text = 'Running tests...', batch = 0) {
 	stopIndeterminateProgress();
-	
+
 	// Calculate percent, allow 100% when current >= total
 	const percent = total > 0 ? Math.min(Math.round((current / total) * 100), 100) : 0;
-	
+
 	const progressFill = document.getElementById('progressFill');
 	const progressPercent = document.getElementById('progressPercent');
 	const progressText = document.getElementById('progressText');
 	const progressCategory = document.getElementById('progressCategory');
 	const progressCount = document.getElementById('progressCount');
-	
+
 	if (progressFill) {
 		progressFill.style.transition = 'width 0.5s ease-out';
 		progressFill.style.width = `${percent}%`;
@@ -1056,7 +1229,7 @@ function finalizeProgress() {
 	const progressPercent = document.getElementById('progressPercent');
 	const progressText = document.getElementById('progressText');
 	const progressCategory = document.getElementById('progressCategory');
-	
+
 	if (progressFill) {
 		progressFill.style.transition = 'width 0.3s ease-out';
 		progressFill.style.width = '100%';
@@ -1076,7 +1249,7 @@ async function fetchResults() {
 	btn.textContent = 'Testing...';
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	
+
 	// Update the input field with normalized URL if it was changed
 	if (url !== urlInput.value) {
 		urlInput.value = url;
@@ -1095,7 +1268,7 @@ async function fetchResults() {
 	const selectedMethods = Array.from(methodCheckboxes)
 		.filter((cb) => cb.checked)
 		.map((cb) => cb.value);
-	
+
 	// Ensure at least one method is selected
 	if (selectedMethods.length === 0) {
 		showAlert('Please select at least one HTTP method', 'No Method Selected', 'warning');
@@ -1197,7 +1370,7 @@ async function fetchResults() {
 	let completedTests = 0;
 	let currentCategory = '';
 	let slowCount = 0;
-	
+
 	updateProgress(0, estimatedTotalTests, `Starting ${totalCategories} categories...`, 'Initializing tests...', 0);
 
 	// Prepare live results table in the DOM
@@ -1260,18 +1433,18 @@ async function fetchResults() {
 				if (line.startsWith('data: ')) {
 					try {
 						const data = JSON.parse(line.slice(6));
-						
+
 						if (data.type === 'total') {
 							estimatedTotalTests = data.count;
 							updateProgress(0, estimatedTotalTests, 'Starting tests...', 'Initializing...', 0);
 						} else if (data.type === 'result') {
 							allResults.push(data.result);
 							completedTests = data.completed;
-							
+
 							// Track slow responses
 							const rt = data.result.responseTime || 0;
 							if (rt >= SLOW_RESPONSE_THRESHOLD) slowCount++;
-							
+
 							// Update current category from result
 							if (data.result.category && data.result.category !== currentCategory) {
 								currentCategory = data.result.category;
@@ -1299,14 +1472,14 @@ async function fetchResults() {
 									slowWarningEl.classList.remove('hidden');
 								}
 							}
-							
+
 							// Update progress bar
 							updateProgress(
 								completedTests,
 								estimatedTotalTests,
 								currentCategory || 'Processing...',
 								`${completedTests} tests completed`,
-								0
+								0,
 							);
 						} else if (data.type === 'waf-detected') {
 							if (data.waf && data.waf.detected) {
@@ -1324,7 +1497,7 @@ async function fetchResults() {
 					}
 				}
 			}
-			
+
 			if (streamComplete) break;
 		}
 
@@ -1364,7 +1537,7 @@ async function fetchResults() {
 		};
 
 		// Short delay to show 100% before hiding
-		await new Promise(resolve => setTimeout(resolve, 500));
+		await new Promise((resolve) => setTimeout(resolve, 500));
 		hideProgress();
 
 		// Now render the final full report (replaces live table with summary + filters + table)
@@ -1477,9 +1650,7 @@ function restoreStateFromLocalStorage() {
 		const headersEl = document.getElementById('customHeaders');
 		if (headersEl) headersEl.value = customHeaders;
 	}
-
 }
-
 
 // WAF Detection functionality
 async function detectWAF() {
@@ -1489,7 +1660,7 @@ async function detectWAF() {
 	const btn = document.getElementById('detectWafBtn');
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	
+
 	// Update the input field with normalized URL if it was changed
 	if (url !== urlInput.value) {
 		urlInput.value = url;
@@ -1529,7 +1700,7 @@ function displayWAFDetectionResults(data) {
 	const isBlocking = det.isActivelyBlocking === true;
 	const isDefaultSecurity = det.hasDefaultSecurity === true;
 	const infraName = det.infrastructure || null;
-	
+
 	let html = `<div class="bg-cyber-card border border-cyber-accent/30 rounded-xl overflow-hidden mb-4">
 		<div class="flex items-center gap-3 p-4 border-b border-cyber-accent/20 bg-cyber-accent/10">
 			<div class="w-10 h-10 rounded-lg bg-cyber-accent/20 flex items-center justify-center">
@@ -1542,7 +1713,7 @@ function displayWAFDetectionResults(data) {
 				<p class="text-xs text-gray-400">Three-phase detection: passive + active + evasion confirmation</p>
 			</div>
 		</div>
-		
+
 		<div class="p-4">
 			<!-- Explanation Section -->
 			<div class="mb-4 p-3 bg-cyber-accent/5 border border-cyber-accent/20 rounded-lg">
@@ -1564,7 +1735,7 @@ function displayWAFDetectionResults(data) {
 		const baseStatus = det.baselineStatus;
 		const prbStatus = det.probeStatus !== undefined ? det.probeStatus : baseStatus;
 		const statusChanged = baseStatus !== prbStatus;
-		
+
 		html += `<div class="mb-4 p-3 bg-cyber-bg/50 border border-gray-600/30 rounded-lg">
 			<p class="text-xs font-bold text-gray-300 mb-2">Request Comparison</p>
 			<div class="flex items-center gap-3 flex-wrap">
@@ -1577,9 +1748,11 @@ function displayWAFDetectionResults(data) {
 					<span class="text-xs text-gray-400">With payload:</span>
 					<span class="px-2 py-0.5 rounded text-xs font-mono font-bold ${prbStatus < 400 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">${prbStatus}</span>
 				</div>
-				${statusChanged 
-					? '<span class="ml-2 px-2 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">BLOCKED</span>' 
-					: '<span class="ml-2 px-2 py-0.5 rounded text-xs font-bold bg-gray-500/20 text-gray-400 border border-gray-500/30">NOT BLOCKED</span>'}
+				${
+					statusChanged
+						? '<span class="ml-2 px-2 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">BLOCKED</span>'
+						: '<span class="ml-2 px-2 py-0.5 rounded text-xs font-bold bg-gray-500/20 text-gray-400 border border-gray-500/30">NOT BLOCKED</span>'
+				}
 			</div>
 		</div>`;
 	}
@@ -1602,7 +1775,7 @@ function displayWAFDetectionResults(data) {
 						<p class="text-xs text-gray-400">Confidence: <strong class="text-white">${det.confidence}%</strong> — Active WAF rules confirmed (evasion probes also blocked)</p>
 					</div>
 				</div>`;
-			
+
 			if (infraName && infraName !== det.wafType) {
 				html += `<p class="text-xs text-gray-400 mb-2">Infrastructure: <strong class="text-cyan-400">${escapeHtml(infraName)}</strong> (CDN), blocking WAF: <strong class="text-red-400">${escapeHtml(det.wafType)}</strong></p>`;
 			}
@@ -1640,7 +1813,11 @@ function displayWAFDetectionResults(data) {
 				<p class="text-xs font-bold text-gray-300 mb-2">Evidence:</p>
 				<ul class="space-y-1">`;
 			det.evidence.forEach((evidence) => {
-				const isInfra = evidence.includes('infrastructure') || evidence.includes('clean response') || evidence.includes('default') || evidence.includes('CDN');
+				const isInfra =
+					evidence.includes('infrastructure') ||
+					evidence.includes('clean response') ||
+					evidence.includes('default') ||
+					evidence.includes('CDN');
 				const isEvasion = evidence.includes('vasion') || evidence.includes('passed through');
 				let codeClass = 'bg-cyber-bg/50 text-gray-300';
 				if (isEvasion) codeClass = 'bg-orange-900/30 text-orange-300';
@@ -1659,7 +1836,7 @@ function displayWAFDetectionResults(data) {
 			});
 			html += `</ul></div>`;
 		}
-		
+
 		html += `</div>`;
 	} else {
 		// Case 4: Nothing detected
@@ -1804,7 +1981,7 @@ async function testHTTPManipulation() {
 	const btn = document.getElementById('httpManipulationBtn');
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	
+
 	// Update the input field with normalized URL if it was changed
 	if (url !== urlInput.value) {
 		urlInput.value = url;
@@ -1839,7 +2016,7 @@ async function testHTTPManipulation() {
 
 function displayHTTPManipulationResults(data) {
 	const resultsDiv = document.getElementById('results');
-	
+
 	let html = `<div class="flex items-center justify-between mb-4 p-4 bg-cyber-card border border-cyber-warning/30 rounded-xl">
 		<div class="flex items-center gap-3">
 			<div class="w-10 h-10 rounded-lg bg-cyber-warning/20 flex items-center justify-center">
@@ -1868,13 +2045,13 @@ function displayHTTPManipulationResults(data) {
 	</div>
 	<div class="mb-4 p-3 bg-cyber-warning/5 border border-cyber-warning/20 rounded-lg">
 		<p class="text-xs text-gray-300 leading-relaxed">
-			<strong class="text-cyber-warning">What is HTTP Manipulation?</strong> This test checks if your WAF can be <strong class="text-cyber-danger">bypassed</strong> by manipulating the HTTP protocol instead of using malicious payloads. 
-			It tests techniques like <strong class="text-white">HTTP Verb Tampering</strong> (using non-standard methods like PATCH, TRACE), <strong class="text-white">Parameter Pollution</strong> (sending duplicate parameters), and <strong class="text-white">Content-Type Confusion</strong>. 
-			<strong class="text-cyber-success">Status 403 (green)</strong> means the WAF blocked the manipulation. 
+			<strong class="text-cyber-warning">What is HTTP Manipulation?</strong> This test checks if your WAF can be <strong class="text-cyber-danger">bypassed</strong> by manipulating the HTTP protocol instead of using malicious payloads.
+			It tests techniques like <strong class="text-white">HTTP Verb Tampering</strong> (using non-standard methods like PATCH, TRACE), <strong class="text-white">Parameter Pollution</strong> (sending duplicate parameters), and <strong class="text-white">Content-Type Confusion</strong>.
+			<strong class="text-cyber-success">Status 403 (green)</strong> means the WAF blocked the manipulation.
 			<strong class="text-cyber-danger">Status 200 (red)</strong> means the request succeeded - the WAF can be <strong class="text-cyber-danger">bypassed</strong> with this technique.
 		</p>
 	</div>
-	
+
 	<div class="bg-cyber-card border border-cyber-warning/30 rounded-xl overflow-hidden mb-4">`;
 
 	if (data.results && data.results.length > 0) {
@@ -1897,7 +2074,7 @@ function displayHTTPManipulationResults(data) {
 			let statusBg = 'bg-gray-500/20 text-gray-400';
 			let rowBgColor = '';
 			let borderColor = '';
-			
+
 			// Handle errors first (orange)
 			if (isError || isNaN(codeNum)) {
 				statusBg = 'bg-orange-500/20 text-orange-400';
@@ -1908,33 +2085,29 @@ function displayHTTPManipulationResults(data) {
 				// For HTTP manipulation, 200 = bypass = red
 				rowBgColor = 'rgba(239, 68, 68, 0.2)'; // red-500 with 20% opacity
 				borderColor = '#ef4444'; // red-500
-			}
-			else if (codeNum === 403) {
+			} else if (codeNum === 403) {
 				statusBg = 'bg-cyber-success/20 text-cyber-success';
 				// 403 = blocked = green
 				rowBgColor = 'rgba(34, 197, 94, 0.2)'; // green-500 with 20% opacity
 				borderColor = '#22c55e'; // green-500
-			}
-			else if (codeNum >= 300 && codeNum < 400) {
+			} else if (codeNum >= 300 && codeNum < 400) {
 				statusBg = 'bg-cyber-warning/20 text-cyber-warning';
 				rowBgColor = 'rgba(249, 115, 22, 0.2)'; // orange-500 with 20% opacity
 				borderColor = '#f97316'; // orange-500
-			}
-			else if (codeNum >= 400 && codeNum < 500 && codeNum !== 403) {
+			} else if (codeNum >= 400 && codeNum < 500 && codeNum !== 403) {
 				statusBg = 'bg-cyber-warning/20 text-cyber-warning';
 				rowBgColor = 'rgba(249, 115, 22, 0.2)'; // orange-500 with 20% opacity
 				borderColor = '#f97316'; // orange-500
-			}
-			else {
+			} else {
 				rowBgColor = 'rgba(107, 114, 128, 0.1)'; // gray-500 with 10% opacity
 				borderColor = '#6b7280'; // gray-500
 			}
-			
+
 			// Determine if bypass occurred based on status code
 			// For HTTP manipulation: 200 = potential bypass, 403 = blocked, others = error/redirect
 			let resultText = 'Blocked';
 			let resultBg = 'bg-cyber-success/20 text-cyber-success';
-			
+
 			if (!isError && !isNaN(codeNum)) {
 				if (codeNum >= 200 && codeNum < 300) {
 					// Status 200 = request succeeded = potential bypass
@@ -1965,7 +2138,7 @@ function displayHTTPManipulationResults(data) {
 			}
 
 			const rowStyle = `background-color: ${rowBgColor}; border-left: 4px solid ${borderColor};`;
-			const methodDisplay = result.method && result.method !== 'undefined' ? result.method : (result.technique || 'N/A');
+			const methodDisplay = result.method && result.method !== 'undefined' ? result.method : result.technique || 'N/A';
 			html += `<tr style="${rowStyle}" class="hover:brightness-110 transition-all">
 				<td class="px-4 py-2.5 text-gray-300">${escapeHtml(result.testType || result.technique || 'Unknown')}</td>
 				<td class="px-4 py-2.5 text-center">
@@ -2030,13 +2203,13 @@ async function testHTTPManipulation() {
 // Toggle all categories - switches between all selected and none selected
 function toggleAllCategories() {
 	const checkboxes = document.querySelectorAll('#categoryCheckboxes input[type=checkbox]');
-	const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+	const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
 	const toggleBtn = document.getElementById('toggleAllCategoriesBtn');
-	
+
 	checkboxes.forEach((cb) => {
 		cb.checked = !allChecked;
 	});
-	
+
 	// Update button icon
 	if (toggleBtn) {
 		const svg = toggleBtn.querySelector('svg');
@@ -2057,7 +2230,9 @@ function toggleAllCategories() {
 // =============================================
 let _apiPanelOpen = false;
 
-function showAPIDocsModal() { openAPIPanel(); }
+function showAPIDocsModal() {
+	openAPIPanel();
+}
 
 function openAPIPanel() {
 	const panel = document.getElementById('apiDocsPanel');
@@ -2108,7 +2283,7 @@ function closeAPIPanel() {
 }
 
 // Close on Escape key
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
 	if (e.key === 'Escape' && _apiPanelOpen) closeAPIPanel();
 });
 
@@ -2120,11 +2295,22 @@ function renderAPIDocsContent() {
 
 	const endpoints = [
 		{
-			id: 'waf-checker', path: '/waf-checker', color: '#00d9ff', label: 'WAF Checker', icon: '🛡️',
+			id: 'waf-checker',
+			path: '/waf-checker',
+			color: '#00d9ff',
+			label: 'WAF Checker',
+			icon: '🛡️',
 			desc: 'Run WAF payload tests with all advanced options: method selection, payload categories, encoding variations, auto WAF detection and bypass adaptation.',
 			params: [
 				{ name: 'url', required: true, type: 'string', desc: 'Target URL' },
-				{ name: 'methods', required: false, type: 'string', desc: 'HTTP methods (comma-separated)', default: 'GET', example: 'GET,POST,PUT' },
+				{
+					name: 'methods',
+					required: false,
+					type: 'string',
+					desc: 'HTTP methods (comma-separated)',
+					default: 'GET',
+					example: 'GET,POST,PUT',
+				},
 				{ name: 'categories', required: false, type: 'string', desc: 'Payload categories to test (comma-separated)' },
 				{ name: 'page', required: false, type: 'number', desc: 'Pagination (50 results/page)', default: '0' },
 				{ name: 'followRedirect', required: false, type: '0|1', desc: 'Follow HTTP redirects' },
@@ -2142,27 +2328,47 @@ function renderAPIDocsContent() {
 			curlSuffix: '&methods=GET,POST&followRedirect=1',
 		},
 		{
-			id: 'recon', path: '/recon', color: '#10b981', label: 'Full Recon', icon: '🔍',
+			id: 'recon',
+			path: '/recon',
+			color: '#10b981',
+			label: 'Full Recon',
+			icon: '🔍',
 			desc: 'Comprehensive reconnaissance: DNS records, WHOIS/RDAP, technologies, SSL/TLS, subdomains, reverse IP, security headers.',
 			params: [{ name: 'url', required: true, type: 'string', desc: 'Target URL' }],
 		},
 		{
-			id: 'security-headers', path: '/security-headers', color: '#a855f7', label: 'Security Headers', icon: '🔒',
+			id: 'security-headers',
+			path: '/security-headers',
+			color: '#a855f7',
+			label: 'Security Headers',
+			icon: '🔒',
 			desc: 'Audit HTTP security headers with individual grades, missing headers detection and actionable recommendations.',
 			params: [{ name: 'url', required: true, type: 'string', desc: 'Target URL' }],
 		},
 		{
-			id: 'speedtest', path: '/speedtest', color: '#f59e0b', label: 'Speed Test', icon: '⚡',
+			id: 'speedtest',
+			path: '/speedtest',
+			color: '#f59e0b',
+			label: 'Speed Test',
+			icon: '⚡',
 			desc: 'Performance analysis: DNS/TTFB timing, estimated Core Web Vitals, resource breakdown, Lighthouse-style scores and optimization advice.',
 			params: [{ name: 'url', required: true, type: 'string', desc: 'Target URL' }],
 		},
 		{
-			id: 'seo', path: '/seo', color: '#84cc16', label: 'SEO Audit', icon: '📊',
+			id: 'seo',
+			path: '/seo',
+			color: '#84cc16',
+			label: 'SEO Audit',
+			icon: '📊',
 			desc: 'Full SEO audit: meta tags, headings, internal/external links, sitemap, robots.txt, structured data, accessibility, keyword density.',
 			params: [{ name: 'url', required: true, type: 'string', desc: 'Target URL' }],
 		},
 		{
-			id: 'http-manipulation', path: '/http-manipulation', color: '#ef4444', label: 'HTTP Manipulation', icon: '🧪',
+			id: 'http-manipulation',
+			path: '/http-manipulation',
+			color: '#ef4444',
+			label: 'HTTP Manipulation',
+			icon: '🧪',
 			desc: 'Test HTTP manipulation techniques: verb tampering, parameter pollution, content-type confusion, host header injection.',
 			params: [{ name: 'url', required: true, type: 'string', desc: 'Target URL' }],
 		},
@@ -2216,14 +2422,18 @@ function renderAPIDocsContent() {
 				{ code: '429', color: '#ef4444', label: 'Rate limit' },
 				{ code: '500', color: '#ef4444', label: 'Server error' },
 				{ code: '502', color: '#ef4444', label: 'Unreachable' },
-			].map(e => `<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.25);border:1px solid ${e.color}22;border-radius:6px;padding:4px 10px;font-size:11px">
+			]
+				.map(
+					(
+						e,
+					) => `<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.25);border:1px solid ${e.color}22;border-radius:6px;padding:4px 10px;font-size:11px">
 				<code style="font-weight:700;font-family:monospace;color:${e.color}">${e.code}</code>
 				<span style="color:#9ca3af">${e.label}</span>
-			</span>`).join('')}
+			</span>`,
+				)
+				.join('')}
 		</div>
 	</div>`;
-
-
 
 	/* ── Target URL input ── */
 	html += `
@@ -2278,11 +2488,15 @@ function renderAPIDocsContent() {
 								<th style="text-align:left;padding:6px 10px;color:#4b5563;font-weight:600">Description</th>
 							</tr></thead>
 							<tbody>
-								${ep.params.map(p => `<tr style="border-bottom:1px solid #1e293b10">
+								${ep.params
+									.map(
+										(p) => `<tr style="border-bottom:1px solid #1e293b10">
 									<td style="padding:5px 10px;white-space:nowrap"><code style="color:${p.required ? '#00d9ff' : '#6b7280'};font-weight:${p.required ? '600' : '400'}">${p.name}</code>${p.required ? '<span style="color:#ef4444;font-size:8px;margin-left:3px">*</span>' : ''}</td>
 									<td style="padding:5px 10px;color:#374151;font-family:monospace;font-size:.65rem">${p.type}</td>
 									<td style="padding:5px 10px;color:#6b7280">${p.desc}${p.default ? ` <span style="color:#374151">(default: ${p.default})</span>` : ''}</td>
-								</tr>`).join('')}
+								</tr>`,
+									)
+									.join('')}
 							</tbody>
 						</table>
 					</div>
@@ -2325,7 +2539,9 @@ function updateApiExamples() {
 	const input = document.getElementById('apiDocsDomain');
 	if (!input) return;
 	const val = input.value.trim() || 'https://example.com';
-	document.querySelectorAll('.api-target-url').forEach(el => { el.textContent = val; });
+	document.querySelectorAll('.api-target-url').forEach((el) => {
+		el.textContent = val;
+	});
 }
 
 function copyApiCmd(iconEl, path, suffix) {
@@ -2334,8 +2550,11 @@ function copyApiCmd(iconEl, path, suffix) {
 	const cmd = `curl "${baseUrl}${path}?url=${encodeURIComponent(domain)}${suffix || ''}"`;
 	navigator.clipboard.writeText(cmd).then(() => {
 		const orig = iconEl.innerHTML;
-		iconEl.innerHTML = '<svg style="width:13px;height:13px;color:#10b981" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-		setTimeout(() => { iconEl.innerHTML = orig; }, 1200);
+		iconEl.innerHTML =
+			'<svg style="width:13px;height:13px;color:#10b981" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+		setTimeout(() => {
+			iconEl.innerHTML = orig;
+		}, 1200);
 	});
 }
 
@@ -2344,8 +2563,11 @@ function copyToClipboard(el, text) {
 		const icon = el.querySelector('.copy-icon');
 		if (icon) {
 			const original = icon.innerHTML;
-			icon.innerHTML = '<svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-			setTimeout(() => { icon.innerHTML = original; }, 1500);
+			icon.innerHTML =
+				'<svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+			setTimeout(() => {
+				icon.innerHTML = original;
+			}, 1500);
 		}
 	});
 }
@@ -2395,7 +2617,7 @@ function initApp() {
 		cb.addEventListener('change', updatePayloadTemplateSection);
 	});
 	updatePayloadTemplateSection();
-	
+
 	// Делегированный обработчик на #results
 	const resultsDiv = document.getElementById('results');
 	if (resultsDiv) {
@@ -2576,7 +2798,10 @@ function exportAsCSV(results) {
 	];
 
 	// Compute response time stats for summary rows
-	let totalTime = 0, slowCount = 0, minTime = Infinity, maxTime = 0;
+	let totalTime = 0,
+		slowCount = 0,
+		minTime = Infinity,
+		maxTime = 0;
 	for (const r of results) {
 		const rt = r.responseTime || 0;
 		totalTime += rt;
@@ -2605,10 +2830,17 @@ function exportAsCSV(results) {
 		),
 		'',
 		'"--- Results Summary ---"',
-		`"Risk Level","${(() => { const bypassed = results.filter(r => r.status === 200 || r.status === '200' || r.status === 500 || r.status === '500').length; const rate = results.length > 0 ? (bypassed / results.length) * 100 : 0; if (rate > 75) return 'Critical'; if (rate > 50) return 'High'; if (rate > 25) return 'Medium'; return 'Low'; })()} "`,
-		`"WAF Effectiveness (%)",${results.length > 0 ? Math.round((100 - (results.filter(r => r.status === 200 || r.status === '200' || r.status === 500 || r.status === '500').length / results.length) * 100) * 100) / 100 : 100}`,
+		`"Risk Level","${(() => {
+			const bypassed = results.filter((r) => r.status === 200 || r.status === '200' || r.status === 500 || r.status === '500').length;
+			const rate = results.length > 0 ? (bypassed / results.length) * 100 : 0;
+			if (rate > 75) return 'Critical';
+			if (rate > 50) return 'High';
+			if (rate > 25) return 'Medium';
+			return 'Low';
+		})()} "`,
+		`"WAF Effectiveness (%)",${results.length > 0 ? Math.round((100 - (results.filter((r) => r.status === 200 || r.status === '200' || r.status === 500 || r.status === '500').length / results.length) * 100) * 100) / 100 : 100}`,
 		`"Total Tests",${results.length}`,
-		`"Bypassed",${results.filter(r => r.status === 200 || r.status === '200' || r.status === 500 || r.status === '500').length}`,
+		`"Bypassed",${results.filter((r) => r.status === 200 || r.status === '200' || r.status === 500 || r.status === '500').length}`,
 		'',
 		'"--- Response Time Summary ---"',
 		`"Avg Response Time (ms)",${avgTime}`,
@@ -2652,11 +2884,11 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
 	const getStatusColor = (status, falsePositiveMode = false) => {
 		const statusStr = String(status);
 		const codeNum = parseInt(statusStr, 10);
-		
+
 		if (isNaN(codeNum)) {
 			return 'rgba(249, 115, 22, 0.2)'; // Orange for errors
 		}
-		
+
 		if (falsePositiveMode) {
 			if (codeNum >= 200 && codeNum < 300) {
 				return 'rgba(34, 197, 94, 0.2)'; // Green for allowed
@@ -2670,22 +2902,22 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
 				return 'rgba(239, 68, 68, 0.2)'; // Red for vulnerable
 			}
 		}
-		
+
 		if (codeNum >= 300 && codeNum < 400) {
 			return 'rgba(249, 115, 22, 0.2)'; // Orange for redirects
 		}
-		
+
 		return 'rgba(107, 114, 128, 0.1)'; // Gray for others
 	};
 
 	const getStatusBorderColor = (status, falsePositiveMode = false) => {
 		const statusStr = String(status);
 		const codeNum = parseInt(statusStr, 10);
-		
+
 		if (isNaN(codeNum)) {
 			return '#f97316'; // Orange
 		}
-		
+
 		if (falsePositiveMode) {
 			if (codeNum >= 200 && codeNum < 300) {
 				return '#22c55e'; // Green
@@ -2699,11 +2931,11 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
 				return '#ef4444'; // Red
 			}
 		}
-		
+
 		if (codeNum >= 300 && codeNum < 400) {
 			return '#f97316'; // Orange
 		}
-		
+
 		return '#6b7280'; // Gray
 	};
 
@@ -2724,7 +2956,7 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
     <title>WAF Security Assessment Report</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        body {
             font-family: 'Outfit', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #0a0e14 0%, #0f1629 50%, #0a0e14 100%);
             color: #e5e7eb;
@@ -2962,19 +3194,22 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
                 </div>
             </div>
             ${(() => {
-				const results = session.results || [];
-				let totalTime = 0, slowCount = 0, minT = Infinity, maxT = 0;
-				for (const r of results) {
-					const rt = r.responseTime || 0;
-					totalTime += rt;
-					if (rt >= 2000) slowCount++;
-					if (rt < minT) minT = rt;
-					if (rt > maxT) maxT = rt;
-				}
-				const avgT = results.length > 0 ? Math.round(totalTime / results.length) : 0;
-				if (minT === Infinity) minT = 0;
-				const avgColor = avgT >= 2000 ? '#ff3860' : avgT >= 1000 ? '#ffb347' : avgT >= 500 ? '#eab308' : '#00ff9d';
-				return `
+							const results = session.results || [];
+							let totalTime = 0,
+								slowCount = 0,
+								minT = Infinity,
+								maxT = 0;
+							for (const r of results) {
+								const rt = r.responseTime || 0;
+								totalTime += rt;
+								if (rt >= 2000) slowCount++;
+								if (rt < minT) minT = rt;
+								if (rt > maxT) maxT = rt;
+							}
+							const avgT = results.length > 0 ? Math.round(totalTime / results.length) : 0;
+							if (minT === Infinity) minT = 0;
+							const avgColor = avgT >= 2000 ? '#ff3860' : avgT >= 1000 ? '#ffb347' : avgT >= 500 ? '#eab308' : '#00ff9d';
+							return `
             <div class="metrics-grid" style="margin-top: 0;">
                 <div class="metric-card">
                     <div class="metric-value" style="font-size: 28px; color: ${avgColor}">${avgT}<span style="font-size: 14px; font-weight: 400;">ms</span></div>
@@ -2993,12 +3228,12 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
                     <div class="metric-label">Slow Requests (&gt;2s)</div>
                 </div>
             </div>`;
-			})()}
+						})()}
         </div>
 
         ${
-			session.wafDetection?.detected
-				? `
+					session.wafDetection?.detected
+						? `
         <div class="card">
             <h2 class="card-title">🔍 WAF Detection</h2>
             <div class="info-item" style="max-width: 500px;">
@@ -3011,8 +3246,8 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
             </div>
         </div>
         `
-				: ''
-		}
+						: ''
+				}
 
         <div class="card">
             <h2 class="card-title">📋 Vulnerability Assessment</h2>
@@ -3029,8 +3264,8 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
                     </thead>
                     <tbody>
                         ${vulnerabilityScores
-									.map(
-										(vuln) => `
+													.map(
+														(vuln) => `
                         <tr>
                             <td><strong>${escapeHtml(vuln.category)}</strong></td>
                             <td><span class="severity-badge severity-${vuln.severity.toLowerCase()}">${vuln.severity}</span></td>
@@ -3039,8 +3274,8 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
                             <td>${vuln.bypassedCount}/${vuln.totalCount}</td>
                         </tr>
                         `,
-									)
-									.join('')}
+													)
+													.join('')}
                     </tbody>
                 </table>
             </div>
@@ -3073,14 +3308,17 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
                     </thead>
                     <tbody>
                         ${session.results
-									.map((result) => {
-										const statusStr = String(result.status);
-										const bgColor = getStatusColor(statusStr, falsePositiveMode);
-										const borderColor = getStatusBorderColor(statusStr, falsePositiveMode);
-										const statusClass = statusStr === '403' ? 'text-cyber-success' : 
-														  (statusStr === '200' || statusStr === '201' || statusStr === '204') ? 'text-cyber-danger' : 
-														  'text-orange-400';
-										return `
+													.map((result) => {
+														const statusStr = String(result.status);
+														const bgColor = getStatusColor(statusStr, falsePositiveMode);
+														const borderColor = getStatusBorderColor(statusStr, falsePositiveMode);
+														const statusClass =
+															statusStr === '403'
+																? 'text-cyber-success'
+																: statusStr === '200' || statusStr === '201' || statusStr === '204'
+																	? 'text-cyber-danger'
+																	: 'text-orange-400';
+														return `
                         <tr class="result-row" style="background-color: ${bgColor}; border-left-color: ${borderColor};">
                             <td><strong>${escapeHtml(result.category || 'N/A')}</strong></td>
                             <td style="font-family: 'JetBrains Mono', monospace; color: #00d9ff;">${escapeHtml(result.method || 'N/A')}</td>
@@ -3089,8 +3327,8 @@ function generateHTMLReport(session, vulnerabilityScores, executiveSummary) {
                             <td><span class="payload">${escapeHtml(result.payload || 'N/A')}</span></td>
                         </tr>
                         `;
-									})
-									.join('')}
+													})
+													.join('')}
                     </tbody>
                 </table>
             </div>
@@ -3204,7 +3442,10 @@ function generateExecutiveSummary(results, vulnerabilityScores, wafDetection) {
 	}
 
 	// Response time stats
-	let totalTime = 0, slowCount = 0, minTime = Infinity, maxTime = 0;
+	let totalTime = 0,
+		slowCount = 0,
+		minTime = Infinity,
+		maxTime = 0;
 	for (const r of results) {
 		const rt = r.responseTime || 0;
 		totalTime += rt;
@@ -3273,7 +3514,7 @@ async function exportAnalyticsScreenshot(event) {
 
 	let btn = null;
 	let oldText = '';
-	
+
 	try {
 		// Show loading state
 		if (event && event.target) {
@@ -3286,7 +3527,7 @@ async function exportAnalyticsScreenshot(event) {
 		}
 
 		// Wait a moment for any animations to complete
-		await new Promise(resolve => setTimeout(resolve, 300));
+		await new Promise((resolve) => setTimeout(resolve, 300));
 
 		// Create a wrapper for better capture
 		const wrapper = document.createElement('div');
@@ -3302,7 +3543,7 @@ async function exportAnalyticsScreenshot(event) {
 			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 			z-index: -9999;
 		`;
-		
+
 		// Add header to screenshot
 		const header = document.createElement('div');
 		const now = new Date();
@@ -3322,7 +3563,7 @@ async function exportAnalyticsScreenshot(event) {
 			</div>
 		`;
 		wrapper.appendChild(header);
-		
+
 		// Clone the content
 		const clone = content.cloneNode(true);
 		clone.style.cssText = `
@@ -3330,10 +3571,10 @@ async function exportAnalyticsScreenshot(event) {
 			width: ${contentWidth}px;
 			margin: 0 auto;
 		`;
-		
+
 		// Ensure all computed styles are applied for screenshot
 		wrapper.appendChild(clone);
-		
+
 		// Add footer
 		const footer = document.createElement('div');
 		footer.innerHTML = `
@@ -3342,18 +3583,18 @@ async function exportAnalyticsScreenshot(event) {
 			</div>
 		`;
 		wrapper.appendChild(footer);
-		
+
 		document.body.appendChild(wrapper);
 
 		// Wait for layout to settle and ensure fonts are loaded
-		await new Promise(resolve => setTimeout(resolve, 500));
-		
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
 		// Make wrapper visible temporarily for capture
 		wrapper.style.visibility = 'visible';
 		wrapper.style.position = 'fixed';
 		wrapper.style.left = '0';
 		wrapper.style.top = '0';
-		
+
 		// Force a reflow to ensure all styles are computed
 		const height = wrapper.offsetHeight;
 		const width = wrapper.offsetWidth;
@@ -3377,9 +3618,9 @@ async function exportAnalyticsScreenshot(event) {
 					clonedWrapper.style.top = '0';
 					clonedWrapper.style.visibility = 'visible';
 				}
-			}
+			},
 		});
-		
+
 		// Remove wrapper
 		document.body.removeChild(wrapper);
 
@@ -3393,7 +3634,7 @@ async function exportAnalyticsScreenshot(event) {
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement('a');
 			link.href = url;
-			
+
 			// Generate filename with timestamp
 			const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
 			let hostname = 'analytics';
@@ -3401,7 +3642,7 @@ async function exportAnalyticsScreenshot(event) {
 				hostname = new URL(currentTestSession?.url || '').hostname.replace(/[^a-zA-Z0-9.-]/g, '_');
 			} catch {}
 			link.download = `waf-analytics_${hostname}_${timestamp}.png`;
-			
+
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -3437,11 +3678,10 @@ async function exportAnalyticsScreenshot(event) {
 				showAlert('Analytics screenshot exported successfully! (Clipboard copy requires HTTPS)', 'Success', 'success');
 			}
 		}, 'image/png');
-
 	} catch (error) {
 		console.error('Screenshot export failed:', error);
 		showAlert(`Failed to export screenshot: ${error.message}`, 'Error', 'error');
-		
+
 		// Restore button
 		if (btn) {
 			btn.innerHTML = oldText;
@@ -3458,16 +3698,16 @@ function generateAnalyticsHTML(session, vulnerabilityScores, summary) {
 	const startTimeStr = startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 	const endTimeStr = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 	const duration = Math.round((endDate - startDate) / 1000);
-	
+
 	// Risk level styling
 	const riskColors = {
-		'Critical': 'bg-cyber-danger/20 text-cyber-danger border-cyber-danger/30',
-		'High': 'bg-cyber-warning/20 text-cyber-warning border-cyber-warning/30',
-		'Medium': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-		'Low': 'bg-cyber-success/20 text-cyber-success border-cyber-success/30'
+		Critical: 'bg-cyber-danger/20 text-cyber-danger border-cyber-danger/30',
+		High: 'bg-cyber-warning/20 text-cyber-warning border-cyber-warning/30',
+		Medium: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+		Low: 'bg-cyber-success/20 text-cyber-success border-cyber-success/30',
 	};
 	const riskStyle = riskColors[summary.riskLevel] || riskColors['Low'];
-	
+
 	return `
 		<!-- Test Info Header -->
 		<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl p-4 mb-4">
@@ -3545,7 +3785,7 @@ function generateAnalyticsHTML(session, vulnerabilityScores, summary) {
 			</div>
 			<div class="bg-cyber-card border ${slow > 0 ? 'border-orange-500/30' : 'border-gray-500/20'} rounded-xl p-2 text-center">
 				<div class="text-base font-bold ${slow > 0 ? 'text-orange-400' : 'text-gray-500'} font-mono">${slow}</div>
-				<div class="text-[9px] text-gray-400 uppercase tracking-wide">Slow (>${threshold/1000}s)</div>
+				<div class="text-[9px] text-gray-400 uppercase tracking-wide">Slow (>${threshold / 1000}s)</div>
 			</div>
 		</div>`;
 		})()}
@@ -3584,14 +3824,18 @@ function generateAnalyticsHTML(session, vulnerabilityScores, summary) {
 				</div>
 				<div class="p-4">
 					<ul class="space-y-2">
-						${summary.recommendations.map((rec) => `
+						${summary.recommendations
+							.map(
+								(rec) => `
 							<li class="flex items-start gap-2 text-xs text-gray-300">
 								<svg class="w-4 h-4 text-cyber-accent shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 								</svg>
 								${rec}
 							</li>
-						`).join('')}
+						`,
+							)
+							.join('')}
 					</ul>
 				</div>
 			</div>
@@ -3619,16 +3863,18 @@ function generateAnalyticsHTML(session, vulnerabilityScores, summary) {
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-cyber-accent/10">
-						${vulnerabilityScores.map((vuln) => {
-							const severityColors = {
-								'Critical': 'bg-cyber-danger/20 text-cyber-danger',
-								'High': 'bg-cyber-warning/20 text-cyber-warning',
-								'Medium': 'bg-blue-500/20 text-blue-400',
-								'Low': 'bg-cyber-success/20 text-cyber-success'
-							};
-							const sevStyle = severityColors[vuln.severity] || severityColors['Low'];
-							const bypassColor = vuln.bypassRate > 50 ? 'text-cyber-danger' : vuln.bypassRate > 20 ? 'text-cyber-warning' : 'text-cyber-success';
-							return `
+						${vulnerabilityScores
+							.map((vuln) => {
+								const severityColors = {
+									Critical: 'bg-cyber-danger/20 text-cyber-danger',
+									High: 'bg-cyber-warning/20 text-cyber-warning',
+									Medium: 'bg-blue-500/20 text-blue-400',
+									Low: 'bg-cyber-success/20 text-cyber-success',
+								};
+								const sevStyle = severityColors[vuln.severity] || severityColors['Low'];
+								const bypassColor =
+									vuln.bypassRate > 50 ? 'text-cyber-danger' : vuln.bypassRate > 20 ? 'text-cyber-warning' : 'text-cyber-success';
+								return `
 								<tr class="hover:bg-cyber-elevated/30 transition-colors">
 									<td class="px-4 py-2.5 text-gray-300" style="text-align: left; word-wrap: break-word;">${escapeHtml(vuln.category)}</td>
 									<td class="px-4 py-2.5 text-center" style="text-align: center;">
@@ -3638,7 +3884,8 @@ function generateAnalyticsHTML(session, vulnerabilityScores, summary) {
 									<td class="px-4 py-2.5 text-center font-bold ${bypassColor}" style="text-align: center;">${vuln.bypassRate}%</td>
 								</tr>
 							`;
-						}).join('')}
+							})
+							.join('')}
 					</tbody>
 				</table>
 			</div>
@@ -3692,7 +3939,10 @@ function _getReconLabel(type) {
 
 function exportReconJSON(type) {
 	const data = _getReconData(type);
-	if (!data) { showAlert('No data to export. Run the scan first.', 'Warning', 'warning'); return; }
+	if (!data) {
+		showAlert('No data to export. Run the scan first.', 'Warning', 'warning');
+		return;
+	}
 	const label = _getReconLabel(type);
 	const hostname = data.hostname || data.url || 'unknown';
 	const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
@@ -3704,7 +3954,10 @@ function exportReconJSON(type) {
 
 function exportReconHTML(type) {
 	const data = _getReconData(type);
-	if (!data) { showAlert('No data to export. Run the scan first.', 'Warning', 'warning'); return; }
+	if (!data) {
+		showAlert('No data to export. Run the scan first.', 'Warning', 'warning');
+		return;
+	}
 
 	const resultsDiv = document.getElementById('results');
 	if (!resultsDiv) return;
@@ -3722,19 +3975,19 @@ function exportReconHTML(type) {
 	// Clone results and clean up for export
 	const cloneDiv = resultsDiv.cloneNode(true);
 	// Remove export buttons from clone
-	cloneDiv.querySelectorAll('button').forEach(btn => {
+	cloneDiv.querySelectorAll('button').forEach((btn) => {
 		const txt = btn.textContent || '';
 		if (txt.includes('JSON') || txt.includes('HTML') || btn.title === 'Screenshot') btn.remove();
 	});
 	// Open all <details> elements
-	cloneDiv.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+	cloneDiv.querySelectorAll('details').forEach((d) => d.setAttribute('open', ''));
 	// Remove max-height constraints so all content is visible
-	cloneDiv.querySelectorAll('[class*="max-h-"]').forEach(el => {
+	cloneDiv.querySelectorAll('[class*="max-h-"]').forEach((el) => {
 		el.style.maxHeight = 'none';
 		el.style.overflow = 'visible';
 	});
 	// Remove tooltip icons
-	cloneDiv.querySelectorAll('.recon-tip').forEach(el => el.remove());
+	cloneDiv.querySelectorAll('.recon-tip').forEach((el) => el.remove());
 
 	// Collect all inline <style> blocks and the Tailwind CSS
 	let inlineStyles = '';
@@ -3747,7 +4000,9 @@ function exportReconHTML(type) {
 		try {
 			const sheet = link.sheet;
 			if (sheet) {
-				const rules = Array.from(sheet.cssRules).map(r => r.cssText).join('\n');
+				const rules = Array.from(sheet.cssRules)
+					.map((r) => r.cssText)
+					.join('\n');
 				tailwindCSS += rules + '\n';
 			}
 		} catch (e) {
@@ -3872,36 +4127,39 @@ async function exportReconScreenshot(event) {
 			const script = document.createElement('script');
 			script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
 			document.head.appendChild(script);
-			await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
+			await new Promise((resolve, reject) => {
+				script.onload = resolve;
+				script.onerror = reject;
+			});
 		}
 
-		await new Promise(resolve => setTimeout(resolve, 300));
+		await new Promise((resolve) => setTimeout(resolve, 300));
 
 		// Clone content first and prepare it
 		const clone = content.cloneNode(true);
 
 		// Remove export buttons from clone
-		clone.querySelectorAll('button').forEach(b => {
+		clone.querySelectorAll('button').forEach((b) => {
 			const txt = b.textContent || '';
 			if (txt.includes('JSON') || txt.includes('HTML') || b.title === 'Screenshot') b.remove();
 		});
 
 		// Expand all scrollable containers (max-h-*) so nothing is clipped
-		clone.querySelectorAll('[class*="max-h-"]').forEach(el => {
+		clone.querySelectorAll('[class*="max-h-"]').forEach((el) => {
 			el.style.maxHeight = 'none';
 			el.style.overflow = 'visible';
 		});
 
 		// Open all <details> elements
-		clone.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+		clone.querySelectorAll('details').forEach((d) => d.setAttribute('open', ''));
 
 		// Remove overflow-hidden that clips content
-		clone.querySelectorAll('.overflow-hidden').forEach(el => {
+		clone.querySelectorAll('.overflow-hidden').forEach((el) => {
 			el.style.overflow = 'visible';
 		});
 
 		// Remove tooltip icons (not useful in screenshot)
-		clone.querySelectorAll('.recon-tip').forEach(el => el.remove());
+		clone.querySelectorAll('.recon-tip').forEach((el) => el.remove());
 
 		// Create a temporary measuring container to find the real needed width
 		const measurer = document.createElement('div');
@@ -3913,7 +4171,7 @@ async function exportReconScreenshot(event) {
 		`;
 		measurer.appendChild(clone.cloneNode(true));
 		document.body.appendChild(measurer);
-		await new Promise(r => setTimeout(r, 200));
+		await new Promise((r) => setTimeout(r, 200));
 		const measuredWidth = Math.max(measurer.scrollWidth, 1200);
 		document.body.removeChild(measurer);
 
@@ -3967,7 +4225,7 @@ async function exportReconScreenshot(event) {
 		document.body.appendChild(wrapper);
 
 		// Wait for layout to settle and images to load
-		await new Promise(resolve => setTimeout(resolve, 800));
+		await new Promise((resolve) => setTimeout(resolve, 800));
 
 		// Make wrapper visible for capture
 		wrapper.style.visibility = 'visible';
@@ -3998,18 +4256,18 @@ async function exportReconScreenshot(event) {
 					clonedWrapper.style.visibility = 'visible';
 				}
 				// Ensure all scrollable areas are expanded in the html2canvas clone too
-				clonedDoc.querySelectorAll('[class*="max-h-"]').forEach(el => {
+				clonedDoc.querySelectorAll('[class*="max-h-"]').forEach((el) => {
 					el.style.maxHeight = 'none';
 					el.style.overflow = 'visible';
 				});
-				clonedDoc.querySelectorAll('.overflow-hidden').forEach(el => {
+				clonedDoc.querySelectorAll('.overflow-hidden').forEach((el) => {
 					el.style.overflow = 'visible';
 				});
-				clonedDoc.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+				clonedDoc.querySelectorAll('details').forEach((d) => d.setAttribute('open', ''));
 
 				// Fix conic-gradient circles for html2canvas (may not support conic-gradient)
 				// Replace with simple bordered circles with the value
-				clonedDoc.querySelectorAll('[style*="conic-gradient"]').forEach(el => {
+				clonedDoc.querySelectorAll('[style*="conic-gradient"]').forEach((el) => {
 					const innerDiv = el.querySelector('div');
 					const span = innerDiv ? innerDiv.querySelector('span') : el.querySelector('span');
 					const color = span ? span.style.color || '#10b981' : '#10b981';
@@ -4017,7 +4275,7 @@ async function exportReconScreenshot(event) {
 					el.style.cssText = `width:56px;height:56px;border-radius:50%;border:3px solid ${color};display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);margin:0 auto;`;
 					el.innerHTML = `<span style="font-size:15px;font-weight:800;color:${color};font-family:system-ui,sans-serif">${val}</span>`;
 				});
-			}
+			},
 		});
 
 		document.body.removeChild(wrapper);
@@ -4033,7 +4291,9 @@ async function exportReconScreenshot(event) {
 			link.href = url;
 			const ts = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
 			let hname = 'scan';
-			try { hname = new URL(document.getElementById('url')?.value || '').hostname.replace(/[^a-zA-Z0-9.-]/g, '_'); } catch {}
+			try {
+				hname = new URL(document.getElementById('url')?.value || '').hostname.replace(/[^a-zA-Z0-9.-]/g, '_');
+			} catch {}
 			link.download = `waf-scan_${hname}_${ts}.png`;
 			document.body.appendChild(link);
 			link.click();
@@ -4052,7 +4312,10 @@ async function exportReconScreenshot(event) {
 				console.warn('Clipboard copy failed:', clipErr);
 			}
 
-			if (btn) { btn.innerHTML = oldText; btn.disabled = false; }
+			if (btn) {
+				btn.innerHTML = oldText;
+				btn.disabled = false;
+			}
 
 			if (clipboardSuccess) {
 				showAlert('Screenshot exported and copied to clipboard!', 'Export', 'success');
@@ -4060,11 +4323,13 @@ async function exportReconScreenshot(event) {
 				showAlert('Screenshot exported successfully!', 'Export', 'success');
 			}
 		}, 'image/png');
-
 	} catch (error) {
 		console.error('Screenshot export failed:', error);
 		showAlert(`Failed to export screenshot: ${error.message}`, 'Error', 'error');
-		if (btn) { btn.innerHTML = oldText; btn.disabled = false; }
+		if (btn) {
+			btn.innerHTML = oldText;
+			btn.disabled = false;
+		}
 	}
 }
 
@@ -4117,7 +4382,7 @@ async function startBatchTest() {
 		try {
 			// Normalize URL by adding https:// if no scheme is present
 			const normalizedUrl = normalizeUrl(line);
-			
+
 			const url = new URL(normalizedUrl);
 			if (url.protocol === 'http:' || url.protocol === 'https:') {
 				validUrls.push(normalizedUrl);
@@ -4647,7 +4912,7 @@ function initCustomPayloads() {
 // Load default payloads from server
 async function loadDefaultPayloads() {
 	if (defaultPayloadsLoaded) return;
-	
+
 	try {
 		const response = await fetch('/api/payloads');
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -4655,44 +4920,48 @@ async function loadDefaultPayloads() {
 		if (!data || Object.keys(data).length === 0) throw new Error('Empty data');
 		defaultPayloads = data;
 		defaultPayloadsLoaded = true;
-		
+
 		// Update PAYLOAD_CATEGORIES with any new categories from server
 		const serverCategories = Object.keys(defaultPayloads);
-		serverCategories.forEach(cat => {
+		serverCategories.forEach((cat) => {
 			if (!PAYLOAD_CATEGORIES.includes(cat)) {
 				PAYLOAD_CATEGORIES.push(cat);
 			}
 		});
 	} catch (e) {
 		console.error('Failed to load default payloads:', e);
-		showAlert('Failed to load payloads from GitHub. Click "Retry" in the Attack Categories panel to try again.', 'Payload Loading Error', 'warning');
+		showAlert(
+			'Failed to load payloads from GitHub. Click "Retry" in the Attack Categories panel to try again.',
+			'Payload Loading Error',
+			'warning',
+		);
 	}
 }
 
 // Show test configuration modal
 async function showTestConfigModal() {
 	initCustomPayloads();
-	
+
 	// Show modal first with loading state
 	if (!testConfigModal) {
 		testConfigModal = new bootstrap.Modal(document.getElementById('testConfigModal'));
 	}
-	
+
 	testConfigModal.show();
 
 	// Reset mobile navigation to categories list
 	const configContainer = document.querySelector('#testConfigModal .modal-body > div');
 	if (configContainer) configContainer.classList.remove('config-editing');
-	
+
 	// Show loading state
 	const categoryList = document.getElementById('configCategoryList');
 	if (categoryList) {
 		categoryList.innerHTML = `<div class="py-6">${cyberLoader({ size: 'md', color: 'text-gray-400', text: 'Loading payloads...' })}</div>`;
 	}
-	
+
 	// Load default payloads from server
 	await loadDefaultPayloads();
-	
+
 	renderConfigCategoryList();
 	showEditorEmpty();
 	updateCustomCount();
@@ -4702,22 +4971,18 @@ async function showTestConfigModal() {
 function renderConfigCategoryList() {
 	const container = document.getElementById('configCategoryList');
 	if (!container) return;
-	
+
 	// Combine default payloads, PAYLOAD_CATEGORIES and custom categories
-	const allCategories = new Set([
-		...Object.keys(defaultPayloads),
-		...PAYLOAD_CATEGORIES, 
-		...Object.keys(customPayloads)
-	]);
-	
+	const allCategories = new Set([...Object.keys(defaultPayloads), ...PAYLOAD_CATEGORIES, ...Object.keys(customPayloads)]);
+
 	let html = '';
-	allCategories.forEach(cat => {
+	allCategories.forEach((cat) => {
 		const hasDefault = defaultPayloads[cat] !== undefined;
 		const isCustom = customPayloads[cat] !== undefined;
 		const isDeleted = isCustom && customPayloads[cat]?._deleted;
 		const isModified = isCustom && hasDefault && !isDeleted;
 		const isNew = isCustom && !hasDefault;
-		
+
 		// Count payloads
 		let payloadCount = 0;
 		if (isCustom && !isDeleted) {
@@ -4725,7 +4990,7 @@ function renderConfigCategoryList() {
 		} else if (hasDefault && !isDeleted) {
 			payloadCount = (defaultPayloads[cat].payloads?.length || 0) + (defaultPayloads[cat].falsePayloads?.length || 0);
 		}
-		
+
 		let badge = '';
 		if (isDeleted) {
 			badge = '<span class="ml-auto px-1.5 py-0.5 text-[10px] bg-cyber-danger/20 text-cyber-danger rounded">DEL</span>';
@@ -4736,17 +5001,17 @@ function renderConfigCategoryList() {
 		} else {
 			badge = `<span class="ml-auto px-1.5 py-0.5 text-[10px] bg-gray-600/50 text-gray-400 rounded">${payloadCount}</span>`;
 		}
-		
+
 		const isActive = currentEditingCategory === cat;
 		html += `
-			<button type="button" onclick="selectCategory('${escapeHtml(cat)}')" 
+			<button type="button" onclick="selectCategory('${escapeHtml(cat)}')"
 					class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-all ${isActive ? 'bg-cyber-accent/20 text-cyber-accent border border-cyber-accent/50' : 'text-gray-300 hover:bg-cyber-elevated hover:text-white'}">
 				<span class="truncate flex-1">${escapeHtml(cat)}</span>
 				${badge}
 			</button>
 		`;
 	});
-	
+
 	container.innerHTML = html;
 }
 
@@ -4766,9 +5031,9 @@ function switchPayloadTab(tab) {
 	const tabFalse = document.getElementById('tabFalsePayloads');
 	const panelAttack = document.getElementById('panelAttackPayloads');
 	const panelFalse = document.getElementById('panelFalsePayloads');
-	
+
 	if (!tabAttack || !tabFalse || !panelAttack || !panelFalse) return;
-	
+
 	if (tab === 'attack') {
 		tabAttack.classList.add('border-cyber-accent', 'text-cyber-accent');
 		tabAttack.classList.remove('border-transparent', 'text-gray-400');
@@ -4790,7 +5055,7 @@ function switchPayloadTab(tab) {
 function updatePayloadCounts(attackCount, falseCount) {
 	const attackCountEl = document.getElementById('attackPayloadCount');
 	const falseCountEl = document.getElementById('falsePayloadCount');
-	
+
 	if (attackCountEl) attackCountEl.textContent = attackCount;
 	if (falseCountEl) falseCountEl.textContent = falseCount;
 }
@@ -4798,25 +5063,25 @@ function updatePayloadCounts(attackCount, falseCount) {
 // Select and edit a category
 function selectCategory(categoryName, activeTab = 'attack') {
 	currentEditingCategory = categoryName;
-	
+
 	document.getElementById('configEditorEmpty').style.display = 'none';
 	document.getElementById('configEditor').style.display = 'flex';
 
 	// Mobile: switch to editor screen
 	const container = document.querySelector('#testConfigModal .modal-body > div');
 	if (container) container.classList.add('config-editing');
-	
+
 	// Update category name input
 	document.getElementById('configCategoryName').value = categoryName;
-	
+
 	// Update badge
 	const badge = document.getElementById('configCategoryBadge');
 	const resetBtn = document.getElementById('configResetBtn');
 	const deleteBtn = document.getElementById('configDeleteBtn');
-	
+
 	const hasDefault = defaultPayloads[categoryName] !== undefined;
 	const isCustom = customPayloads[categoryName] !== undefined;
-	
+
 	if (isCustom && customPayloads[categoryName]?._deleted) {
 		badge.textContent = 'Deleted';
 		badge.className = 'px-2 py-0.5 text-xs rounded-full bg-cyber-danger/20 text-cyber-danger';
@@ -4838,11 +5103,11 @@ function selectCategory(categoryName, activeTab = 'attack') {
 		resetBtn.style.display = 'none';
 		deleteBtn.style.display = '';
 	}
-	
+
 	// Get payloads - prioritize custom, fallback to default
 	let attackPayloads = [];
 	let falsePayloads = [];
-	
+
 	if (isCustom) {
 		// Use custom payloads if they exist
 		attackPayloads = customPayloads[categoryName].payloads || [];
@@ -4852,17 +5117,17 @@ function selectCategory(categoryName, activeTab = 'attack') {
 		attackPayloads = defaultPayloads[categoryName].payloads || [];
 		falsePayloads = defaultPayloads[categoryName].falsePayloads || [];
 	}
-	
+
 	// All payloads are now editable
 	renderPayloadList('configAttackPayloads', attackPayloads, 'attack', !isCustom);
 	renderPayloadList('configFalsePayloads', falsePayloads, 'false', !isCustom);
-	
+
 	// Update payload counts in tabs
 	updatePayloadCounts(attackPayloads.length, falsePayloads.length);
-	
+
 	// Switch to the specified tab (default: attack)
 	switchPayloadTab(activeTab);
-	
+
 	// Update sidebar selection
 	renderConfigCategoryList();
 }
@@ -4871,7 +5136,7 @@ function selectCategory(categoryName, activeTab = 'attack') {
 function renderPayloadList(containerId, payloads, type, isDefault = false) {
 	const container = document.getElementById(containerId);
 	if (!container) return;
-	
+
 	if (payloads.length === 0) {
 		container.innerHTML = `
 			<div class="text-center py-4 text-gray-500 text-sm">
@@ -4881,21 +5146,21 @@ function renderPayloadList(containerId, payloads, type, isDefault = false) {
 		`;
 		return;
 	}
-	
+
 	// Check if this category is modified (has custom payloads)
 	const isModified = !isDefault;
 	const borderClass = isModified ? 'border-cyber-warning/50' : 'border-cyber-accent/20';
-	
+
 	let html = '';
-	
+
 	payloads.forEach((payload, index) => {
 		html += `
 			<div class="flex items-center gap-2">
-				<input type="text" value="${escapeHtml(payload)}" 
+				<input type="text" value="${escapeHtml(payload)}"
 					   onfocus="enableEditMode('${type}', ${index})"
 					   onchange="updatePayloadValue('${type}', ${index}, this.value)"
 					   class="flex-1 bg-cyber-elevated border ${borderClass} rounded px-3 py-2 text-sm font-mono text-gray-100 focus:border-cyber-accent focus:ring-1 focus:ring-cyber-accent/30 outline-none" />
-				<button type="button" onclick="removePayload('${type}', ${index})" 
+				<button type="button" onclick="removePayload('${type}', ${index})"
 						class="shrink-0 p-2 text-cyber-danger/60 hover:text-cyber-danger hover:bg-cyber-danger/20 rounded transition-all" title="Remove payload">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -4904,14 +5169,14 @@ function renderPayloadList(containerId, payloads, type, isDefault = false) {
 			</div>
 		`;
 	});
-	
+
 	container.innerHTML = html;
 }
 
 // Enable edit mode when clicking on a default payload
 function enableEditMode(type, index) {
 	if (!currentEditingCategory) return;
-	
+
 	// If this is still showing default payloads, copy to custom first
 	if (!customPayloads[currentEditingCategory]) {
 		initCustomFromDefault(currentEditingCategory);
@@ -4922,27 +5187,27 @@ function enableEditMode(type, index) {
 // Initialize custom payloads from default if not exists
 function initCustomFromDefault(categoryName) {
 	if (customPayloads[categoryName]) return; // Already customized
-	
+
 	const defaultData = defaultPayloads[categoryName];
 	customPayloads[categoryName] = {
 		type: defaultData?.type || 'ParamCheck',
 		payloads: defaultData?.payloads ? [...defaultData.payloads] : [],
-		falsePayloads: defaultData?.falsePayloads ? [...defaultData.falsePayloads] : []
+		falsePayloads: defaultData?.falsePayloads ? [...defaultData.falsePayloads] : [],
 	};
 }
 
 // Add new payload
 function addPayload(type) {
 	if (!currentEditingCategory) return;
-	
+
 	// Initialize from default if this is a default category being customized
 	initCustomFromDefault(currentEditingCategory);
-	
+
 	const key = type === 'attack' ? 'payloads' : 'falsePayloads';
 	if (!customPayloads[currentEditingCategory][key]) {
 		customPayloads[currentEditingCategory][key] = [];
 	}
-	
+
 	customPayloads[currentEditingCategory][key].push('');
 	selectCategory(currentEditingCategory);
 	updateCustomCount();
@@ -4951,10 +5216,10 @@ function addPayload(type) {
 // Copy a default payload to custom list for editing
 function copyPayloadToCustom(type, payload) {
 	if (!currentEditingCategory) return;
-	
+
 	// Initialize from default
 	initCustomFromDefault(currentEditingCategory);
-	
+
 	// The payload is already copied when we initialized from default
 	// Just refresh the view to show editable state
 	selectCategory(currentEditingCategory);
@@ -4964,13 +5229,13 @@ function copyPayloadToCustom(type, payload) {
 // Update payload value
 function updatePayloadValue(type, index, value) {
 	if (!currentEditingCategory) return;
-	
+
 	// Copy to custom first if not already
 	if (!customPayloads[currentEditingCategory]) {
 		initCustomFromDefault(currentEditingCategory);
 		renderConfigCategoryList();
 	}
-	
+
 	const key = type === 'attack' ? 'payloads' : 'falsePayloads';
 	if (customPayloads[currentEditingCategory][key]) {
 		customPayloads[currentEditingCategory][key][index] = value;
@@ -4980,12 +5245,12 @@ function updatePayloadValue(type, index, value) {
 // Remove payload
 function removePayload(type, index) {
 	if (!currentEditingCategory) return;
-	
+
 	// Copy to custom first if not already
 	if (!customPayloads[currentEditingCategory]) {
 		initCustomFromDefault(currentEditingCategory);
 	}
-	
+
 	const key = type === 'attack' ? 'payloads' : 'falsePayloads';
 	if (customPayloads[currentEditingCategory][key]) {
 		customPayloads[currentEditingCategory][key].splice(index, 1);
@@ -4999,21 +5264,21 @@ function removePayload(type, index) {
 function addNewCategory() {
 	const name = prompt('Enter new category name:');
 	if (!name || name.trim() === '') return;
-	
+
 	const trimmedName = name.trim();
-	
+
 	// Check if category already exists
 	if (defaultPayloads[trimmedName] || customPayloads[trimmedName]) {
 		showAlert('A category with this name already exists.', 'Error', 'error');
 		return;
 	}
-	
+
 	customPayloads[trimmedName] = {
 		type: 'ParamCheck',
 		payloads: [],
-		falsePayloads: []
+		falsePayloads: [],
 	};
-	
+
 	renderConfigCategoryList();
 	selectCategory(trimmedName);
 	updateCustomCount();
@@ -5022,25 +5287,29 @@ function addNewCategory() {
 // Delete category (works for all categories)
 async function deleteCategory() {
 	if (!currentEditingCategory) return;
-	
+
 	const hasDefault = defaultPayloads[currentEditingCategory] !== undefined;
-	
+
 	if (hasDefault) {
-		const confirmed = await showConfirm(`Delete "${currentEditingCategory}"?\n\nThis will hide this default category from tests. You can restore it by resetting all payloads.`, 'Delete Category', 'danger');
+		const confirmed = await showConfirm(
+			`Delete "${currentEditingCategory}"?\n\nThis will hide this default category from tests. You can restore it by resetting all payloads.`,
+			'Delete Category',
+			'danger',
+		);
 		if (!confirmed) return;
 		// Mark as deleted by setting empty payloads
 		customPayloads[currentEditingCategory] = {
 			type: defaultPayloads[currentEditingCategory]?.type || 'ParamCheck',
 			payloads: [],
 			falsePayloads: [],
-			_deleted: true
+			_deleted: true,
 		};
 	} else {
 		const confirmed = await showConfirm(`Are you sure you want to delete "${currentEditingCategory}"?`, 'Delete Category', 'danger');
 		if (!confirmed) return;
 		delete customPayloads[currentEditingCategory];
 	}
-	
+
 	renderConfigCategoryList();
 	showEditorEmpty();
 	updateCustomCount();
@@ -5049,10 +5318,10 @@ async function deleteCategory() {
 // Reset category to default
 async function resetCategoryToDefault() {
 	if (!currentEditingCategory) return;
-	
+
 	const confirmed = await showConfirm(`Reset "${currentEditingCategory}" to default payloads?`, 'Reset Category', 'warning');
 	if (!confirmed) return;
-	
+
 	delete customPayloads[currentEditingCategory];
 	localStorage.setItem('wafchecker_customPayloads', JSON.stringify(customPayloads));
 	renderConfigCategoryList();
@@ -5062,9 +5331,13 @@ async function resetCategoryToDefault() {
 
 // Reset ALL payloads to defaults
 async function resetAllPayloads() {
-	const confirmed = await showConfirm('Reset ALL payloads to defaults?\n\nThis will remove all your customizations, modifications, and custom categories.', 'Reset All Payloads', 'danger');
+	const confirmed = await showConfirm(
+		'Reset ALL payloads to defaults?\n\nThis will remove all your customizations, modifications, and custom categories.',
+		'Reset All Payloads',
+		'danger',
+	);
 	if (!confirmed) return;
-	
+
 	customPayloads = {};
 	localStorage.setItem('wafchecker_customPayloads', JSON.stringify(customPayloads));
 	renderConfigCategoryList();
@@ -5077,12 +5350,12 @@ async function resetAllPayloads() {
 function updateCustomCount() {
 	const countEl = document.getElementById('configCustomCount');
 	if (!countEl) return;
-	
+
 	let total = 0;
-	Object.values(customPayloads).forEach(cat => {
+	Object.values(customPayloads).forEach((cat) => {
 		total += (cat.payloads?.length || 0) + (cat.falsePayloads?.length || 0);
 	});
-	
+
 	countEl.textContent = total;
 }
 
@@ -5097,33 +5370,35 @@ function saveTestConfig() {
 			currentEditingCategory = newName;
 		}
 	}
-	
+
 	// Clean up empty payloads
-	Object.keys(customPayloads).forEach(cat => {
+	Object.keys(customPayloads).forEach((cat) => {
 		if (customPayloads[cat].payloads) {
-			customPayloads[cat].payloads = customPayloads[cat].payloads.filter(p => p.trim() !== '');
+			customPayloads[cat].payloads = customPayloads[cat].payloads.filter((p) => p.trim() !== '');
 		}
 		if (customPayloads[cat].falsePayloads) {
-			customPayloads[cat].falsePayloads = customPayloads[cat].falsePayloads.filter(p => p.trim() !== '');
+			customPayloads[cat].falsePayloads = customPayloads[cat].falsePayloads.filter((p) => p.trim() !== '');
 		}
-		
+
 		// Remove category if empty and not a modification
-		if (!PAYLOAD_CATEGORIES.includes(cat) && 
+		if (
+			!PAYLOAD_CATEGORIES.includes(cat) &&
 			(!customPayloads[cat].payloads || customPayloads[cat].payloads.length === 0) &&
-			(!customPayloads[cat].falsePayloads || customPayloads[cat].falsePayloads.length === 0)) {
+			(!customPayloads[cat].falsePayloads || customPayloads[cat].falsePayloads.length === 0)
+		) {
 			delete customPayloads[cat];
 		}
 	});
-	
+
 	// Save to localStorage
 	localStorage.setItem('wafchecker_customPayloads', JSON.stringify(customPayloads));
-	
+
 	// Update category checkboxes in main UI
 	updateCategoryCheckboxesWithCustom();
-	
+
 	// Show success message
 	showAlert('Configuration saved successfully!', 'Success', 'success');
-	
+
 	if (testConfigModal) {
 		testConfigModal.hide();
 	}
@@ -5133,27 +5408,27 @@ function saveTestConfig() {
 function updateCategoryCheckboxesWithCustom() {
 	const container = document.getElementById('categoryCheckboxes');
 	if (!container) return;
-	
+
 	// Get all categories (default + custom)
 	const defaultCats = Object.keys(defaultPayloads);
 	const allCategories = [...new Set([...PAYLOAD_CATEGORIES, ...defaultCats, ...Object.keys(customPayloads)])];
-	
+
 	container.innerHTML = '';
 	const defaultChecked = ['SQL Injection', 'XSS'];
-	
+
 	allCategories.forEach((cat, idx) => {
 		const id = 'cat_' + idx;
 		const hasDefault = defaultPayloads[cat] !== undefined || PAYLOAD_CATEGORIES.includes(cat);
 		const isCustom = customPayloads[cat] !== undefined && !hasDefault;
 		const isModified = customPayloads[cat] !== undefined && hasDefault;
-		
+
 		let label = cat;
 		if (isCustom) {
 			label += ' <span class="text-cyber-success text-[10px]">(custom)</span>';
 		} else if (isModified) {
 			label += ' <span class="text-cyber-warning text-[10px]">(mod)</span>';
 		}
-		
+
 		const div = document.createElement('div');
 		div.className = 'form-check';
 		div.innerHTML = `<input class="form-check-input" type="checkbox" value="${cat}" id="${id}"${defaultChecked.includes(cat) ? ' checked' : ''}>
@@ -5166,16 +5441,16 @@ function updateCategoryCheckboxesWithCustom() {
 function exportCustomPayloads() {
 	// Export ALL payloads (defaults merged with customs)
 	const allPayloads = {};
-	
+
 	// Start with all default payloads
 	for (const [cat, data] of Object.entries(defaultPayloads)) {
 		allPayloads[cat] = {
 			type: data.type || 'ParamCheck',
 			payloads: [...(data.payloads || [])],
-			falsePayloads: [...(data.falsePayloads || [])]
+			falsePayloads: [...(data.falsePayloads || [])],
 		};
 	}
-	
+
 	// Override with custom payloads (including deleted ones)
 	for (const [cat, data] of Object.entries(customPayloads)) {
 		if (data._deleted) {
@@ -5185,26 +5460,26 @@ function exportCustomPayloads() {
 			allPayloads[cat] = {
 				type: data.type || 'ParamCheck',
 				payloads: [...(data.payloads || [])],
-				falsePayloads: [...(data.falsePayloads || [])]
+				falsePayloads: [...(data.falsePayloads || [])],
 			};
 		}
 	}
-	
+
 	const exportData = {
 		version: '2.0',
 		exportedAt: new Date().toISOString(),
-		payloads: allPayloads
+		payloads: allPayloads,
 	};
-	
+
 	// Convert to YAML
 	const yamlStr = jsyaml.dump(exportData, {
 		indent: 2,
 		lineWidth: -1,
 		quotingType: '"',
 		forceQuotes: false,
-		skipInvalid: false
+		skipInvalid: false,
 	});
-	
+
 	const blob = new Blob([yamlStr], { type: 'text/yaml' });
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
@@ -5225,14 +5500,14 @@ function importCustomPayloads() {
 function handlePayloadsImport(event) {
 	const file = event.target.files[0];
 	if (!file) return;
-	
+
 	const reader = new FileReader();
-	reader.onload = async function(e) {
+	reader.onload = async function (e) {
 		try {
 			const fileContent = e.target.result;
 			const fileName = file.name.toLowerCase();
 			let imported;
-			
+
 			// Detect format and parse accordingly
 			if (fileName.endsWith('.yaml') || fileName.endsWith('.yml')) {
 				// Parse YAML
@@ -5255,48 +5530,52 @@ function handlePayloadsImport(event) {
 					imported = jsyaml.load(fileContent);
 				}
 			}
-			
+
 			// Validate structure
 			if (typeof imported !== 'object' || imported === null) {
 				throw new Error('Invalid format: expected an object');
 			}
-			
+
 			// Handle new format (v2.0) with wrapper
 			let payloadsData = imported;
 			if (imported.version && imported.payloads) {
 				payloadsData = imported.payloads;
 			}
-			
+
 			// Ask user what to do
-			const replaceAll = await showConfirm('Replace all payloads?\n\nOK = Replace all (recommended)\nCancel = Merge with existing', 'Import Mode');
-			
+			const replaceAll = await showConfirm(
+				'Replace all payloads?\n\nOK = Replace all (recommended)\nCancel = Merge with existing',
+				'Import Mode',
+			);
+
 			if (replaceAll) {
 				// Replace mode - clear all custom payloads and import
 				customPayloads = {};
 			}
-			
+
 			// Import payloads
-			Object.keys(payloadsData).forEach(cat => {
+			Object.keys(payloadsData).forEach((cat) => {
 				const data = payloadsData[cat];
 				if (data.payloads !== undefined || data.falsePayloads !== undefined) {
 					// Check if this differs from default
 					const defaultData = defaultPayloads[cat];
-					const isDifferentFromDefault = !defaultData || 
+					const isDifferentFromDefault =
+						!defaultData ||
 						JSON.stringify(data.payloads) !== JSON.stringify(defaultData.payloads) ||
 						JSON.stringify(data.falsePayloads) !== JSON.stringify(defaultData.falsePayloads) ||
 						data._deleted;
-					
+
 					if (isDifferentFromDefault) {
 						customPayloads[cat] = {
 							type: data.type || 'ParamCheck',
 							payloads: data.payloads || [],
 							falsePayloads: data.falsePayloads || [],
-							...(data._deleted ? { _deleted: true } : {})
+							...(data._deleted ? { _deleted: true } : {}),
 						};
 					}
 				}
 			});
-			
+
 			localStorage.setItem('wafchecker_customPayloads', JSON.stringify(customPayloads));
 			renderConfigCategoryList();
 			updateCustomCount();
@@ -5307,14 +5586,14 @@ function handlePayloadsImport(event) {
 		}
 	};
 	reader.readAsText(file);
-	
+
 	// Reset input
 	event.target.value = '';
 }
 
 // Override renderCategoryCheckboxes to include custom categories
 const originalRenderCategoryCheckboxes = renderCategoryCheckboxes;
-renderCategoryCheckboxes = function() {
+renderCategoryCheckboxes = function () {
 	initCustomPayloads();
 	updateCategoryCheckboxesWithCustom();
 };
@@ -5325,7 +5604,10 @@ renderCategoryCheckboxes = function() {
 async function runSecurityHeaders() {
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	if (!url) { showAlert('Please enter a target URL first.', 'Missing URL', 'warning'); return; }
+	if (!url) {
+		showAlert('Please enter a target URL first.', 'Missing URL', 'warning');
+		return;
+	}
 	if (url !== urlInput.value) urlInput.value = url;
 
 	const resultsDiv = document.getElementById('results');
@@ -5347,11 +5629,20 @@ function displaySecurityHeadersResults(data) {
 	lastSecurityHeadersData = data;
 	const resultsDiv = document.getElementById('results');
 	const gradeColors = {
-		'A+': 'text-cyber-success', 'A': 'text-cyber-success', 'B': 'text-yellow-400',
-		'C': 'text-orange-400', 'D': 'text-cyber-danger', 'F': 'text-red-500'
+		'A+': 'text-cyber-success',
+		A: 'text-cyber-success',
+		B: 'text-yellow-400',
+		C: 'text-orange-400',
+		D: 'text-cyber-danger',
+		F: 'text-red-500',
 	};
 	const gradeColor = gradeColors[data.grade] || 'text-gray-400';
-	const severityColors = { critical: 'text-red-400 bg-red-500/10 border-red-500/30', high: 'text-orange-400 bg-orange-500/10 border-orange-500/30', medium: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30', low: 'text-gray-400 bg-gray-500/10 border-gray-500/30' };
+	const severityColors = {
+		critical: 'text-red-400 bg-red-500/10 border-red-500/30',
+		high: 'text-orange-400 bg-orange-500/10 border-orange-500/30',
+		medium: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
+		low: 'text-gray-400 bg-gray-500/10 border-gray-500/30',
+	};
 	const severityIcons = { critical: '🔴', high: '🟠', medium: '🟡', low: '⚪' };
 
 	let html = `<div class="p-4">
@@ -5503,7 +5794,7 @@ function displayDNSReconResults(data) {
 					<h4 class="text-xs font-bold text-cyber-accent uppercase tracking-wider">IPv4 Addresses</h4>
 				</div>
 				<div class="p-3 space-y-1">
-					${data.ipAddresses.length > 0 ? data.ipAddresses.map(ip => `<code class="block text-sm font-mono text-white">${escapeHtml(ip)}</code>`).join('') : '<span class="text-xs text-gray-500">None found</span>'}
+					${data.ipAddresses.length > 0 ? data.ipAddresses.map((ip) => `<code class="block text-sm font-mono text-white">${escapeHtml(ip)}</code>`).join('') : '<span class="text-xs text-gray-500">None found</span>'}
 				</div>
 			</div>
 			<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl overflow-hidden">
@@ -5511,7 +5802,7 @@ function displayDNSReconResults(data) {
 					<h4 class="text-xs font-bold text-cyber-accent uppercase tracking-wider">IPv6 Addresses</h4>
 				</div>
 				<div class="p-3 space-y-1">
-					${data.ipv6Addresses.length > 0 ? data.ipv6Addresses.map(ip => `<code class="block text-xs font-mono text-white break-all">${escapeHtml(ip)}</code>`).join('') : '<span class="text-xs text-gray-500">None found</span>'}
+					${data.ipv6Addresses.length > 0 ? data.ipv6Addresses.map((ip) => `<code class="block text-xs font-mono text-white break-all">${escapeHtml(ip)}</code>`).join('') : '<span class="text-xs text-gray-500">None found</span>'}
 				</div>
 			</div>
 		</div>`;
@@ -5565,7 +5856,7 @@ function displayDNSReconResults(data) {
 				<h4 class="text-xs font-bold text-cyber-accent uppercase tracking-wider">Nameservers</h4>
 			</div>
 			<div class="p-3 space-y-1">
-				${data.nameservers.map(ns => `<code class="block text-sm font-mono text-white">${escapeHtml(ns)}</code>`).join('')}
+				${data.nameservers.map((ns) => `<code class="block text-sm font-mono text-white">${escapeHtml(ns)}</code>`).join('')}
 			</div>
 		</div>`;
 	}
@@ -5577,7 +5868,7 @@ function displayDNSReconResults(data) {
 				<h4 class="text-xs font-bold text-cyber-accent uppercase tracking-wider">Mail Servers (MX)</h4>
 			</div>
 			<div class="p-3 space-y-1">
-				${data.mailServers.map(mx => `<div class="flex items-center gap-3"><span class="text-[10px] text-gray-500 font-mono w-8">P:${mx.priority}</span><code class="text-sm font-mono text-white">${escapeHtml(mx.server)}</code></div>`).join('')}
+				${data.mailServers.map((mx) => `<div class="flex items-center gap-3"><span class="text-[10px] text-gray-500 font-mono w-8">P:${mx.priority}</span><code class="text-sm font-mono text-white">${escapeHtml(mx.server)}</code></div>`).join('')}
 			</div>
 		</div>`;
 	}
@@ -5611,7 +5902,7 @@ function displayDNSReconResults(data) {
 				TXT Records (${data.txtRecords.length})
 			</summary>
 			<div class="p-3 space-y-1 max-h-48 overflow-y-auto">
-				${data.txtRecords.map(txt => `<code class="block text-[10px] font-mono text-gray-400 break-all py-1 border-b border-cyber-accent/5">${escapeHtml(txt)}</code>`).join('')}
+				${data.txtRecords.map((txt) => `<code class="block text-[10px] font-mono text-gray-400 break-all py-1 border-b border-cyber-accent/5">${escapeHtml(txt)}</code>`).join('')}
 			</div>
 		</details>`;
 	}
@@ -5629,9 +5920,12 @@ function displayDNSReconResults(data) {
 			</div>
 			<div class="max-h-80 overflow-y-auto divide-y divide-cyber-accent/10">`;
 		for (const sub of data.subdomains) {
-			const srcColor = sub.source === 'DNS + CT' ? 'text-purple-400 bg-purple-500/10 border-purple-500/30' :
-				sub.source === 'DNS' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
-				'text-blue-400 bg-blue-500/10 border-blue-500/30';
+			const srcColor =
+				sub.source === 'DNS + CT'
+					? 'text-purple-400 bg-purple-500/10 border-purple-500/30'
+					: sub.source === 'DNS'
+						? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+						: 'text-blue-400 bg-blue-500/10 border-blue-500/30';
 			html += `<div class="flex items-center justify-between px-4 py-1.5 hover:bg-cyber-elevated/30 transition-colors">
 				<div class="flex items-center gap-2 min-w-0">
 					<span class="w-1.5 h-1.5 rounded-full ${sub.ip ? 'bg-emerald-400' : 'bg-gray-600'} flex-shrink-0"></span>
@@ -5654,7 +5948,7 @@ function displayDNSReconResults(data) {
 	if (data.reverseIpDomains && data.reverseIpDomains.length > 0) {
 		const domains = data.reverseIpDomains;
 		const targetHost = data.hostname?.toLowerCase() || '';
-		const otherDomains = domains.filter(d => d !== targetHost);
+		const otherDomains = domains.filter((d) => d !== targetHost);
 		html += `<div class="bg-cyber-card border border-amber-500/20 rounded-xl overflow-hidden mb-4">
 			<div class="px-4 py-2.5 border-b border-amber-500/20 bg-amber-500/5 flex items-center justify-between">
 				<h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Reverse IP — Shared Hosting (${otherDomains.length} domain${otherDomains.length > 1 ? 's' : ''})</h4>
@@ -5690,7 +5984,7 @@ function saveScanToHistory(session) {
 
 	const history = getScanHistory();
 	const totalTests = session.results.length;
-	const bypassed = session.results.filter(r => {
+	const bypassed = session.results.filter((r) => {
 		const s = parseInt(String(r.status), 10);
 		return s === 200 || s === 500;
 	}).length;
@@ -5698,7 +5992,9 @@ function saveScanToHistory(session) {
 	const effectiveness = 100 - bypassRate;
 
 	// Response time stats
-	let totalTime = 0, minTime = Infinity, maxTime = 0;
+	let totalTime = 0,
+		minTime = Infinity,
+		maxTime = 0;
 	for (const r of session.results) {
 		const rt = r.responseTime || 0;
 		totalTime += rt;
@@ -5719,8 +6015,8 @@ function saveScanToHistory(session) {
 		avgResponseTime: avgTime,
 		minResponseTime: minTime,
 		maxResponseTime: maxTime,
-		categories: [...new Set(session.results.map(r => r.category))],
-		methods: [...new Set(session.results.map(r => r.method))],
+		categories: [...new Set(session.results.map((r) => r.category))],
+		methods: [...new Set(session.results.map((r) => r.method))],
 	};
 
 	history.unshift(entry);
@@ -5780,7 +6076,12 @@ function showScanHistory() {
 			const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 			const effColor = scan.effectiveness >= 75 ? 'text-cyber-success' : scan.effectiveness >= 50 ? 'text-yellow-400' : 'text-cyber-danger';
 			const riskLevel = scan.bypassRate > 75 ? 'Critical' : scan.bypassRate > 50 ? 'High' : scan.bypassRate > 25 ? 'Medium' : 'Low';
-			const riskColors = { Critical: 'text-red-400 bg-red-500/10 border-red-500/30', High: 'text-orange-400 bg-orange-500/10 border-orange-500/30', Medium: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30', Low: 'text-cyber-success bg-cyber-success/10 border-cyber-success/30' };
+			const riskColors = {
+				Critical: 'text-red-400 bg-red-500/10 border-red-500/30',
+				High: 'text-orange-400 bg-orange-500/10 border-orange-500/30',
+				Medium: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
+				Low: 'text-cyber-success bg-cyber-success/10 border-cyber-success/30',
+			};
 
 			html += `<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl p-4 hover:border-cyber-accent/40 transition-all">
 				<div class="flex items-center justify-between mb-3">
@@ -5841,7 +6142,7 @@ function showReconTip(el) {
 	const r = el.getBoundingClientRect();
 	tt.style.left = Math.min(r.left + r.width / 2 - 140, window.innerWidth - 290) + 'px';
 	tt.style.left = Math.max(8, parseFloat(tt.style.left)) + 'px';
-	tt.style.top = (r.bottom + 8) + 'px';
+	tt.style.top = r.bottom + 8 + 'px';
 	tt.classList.add('visible');
 }
 function hideReconTip() {
@@ -5855,7 +6156,10 @@ function hideReconTip() {
 async function runSEOTest() {
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	if (!url) { showAlert('Please enter a target URL first.', 'Missing URL', 'warning'); return; }
+	if (!url) {
+		showAlert('Please enter a target URL first.', 'Missing URL', 'warning');
+		return;
+	}
 	if (url !== urlInput.value) urlInput.value = url;
 
 	const resultsDiv = document.getElementById('results');
@@ -5882,19 +6186,33 @@ function displaySEOResults(data) {
 	const resultsDiv = document.getElementById('results');
 
 	// Score colors
-	const scoreHex = data.score >= 90 ? { text: '#34d399', border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.1)' } :
-		data.score >= 80 ? { text: '#22d3ee', border: 'rgba(6,182,212,0.3)', bg: 'rgba(6,182,212,0.1)' } :
-		data.score >= 70 ? { text: '#facc15', border: 'rgba(234,179,8,0.3)', bg: 'rgba(234,179,8,0.1)' } :
-		data.score >= 50 ? { text: '#fb923c', border: 'rgba(249,115,22,0.3)', bg: 'rgba(249,115,22,0.1)' } :
-		{ text: '#f87171', border: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.1)' };
+	const scoreHex =
+		data.score >= 90
+			? { text: '#34d399', border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.1)' }
+			: data.score >= 80
+				? { text: '#22d3ee', border: 'rgba(6,182,212,0.3)', bg: 'rgba(6,182,212,0.1)' }
+				: data.score >= 70
+					? { text: '#facc15', border: 'rgba(234,179,8,0.3)', bg: 'rgba(234,179,8,0.1)' }
+					: data.score >= 50
+						? { text: '#fb923c', border: 'rgba(249,115,22,0.3)', bg: 'rgba(249,115,22,0.1)' }
+						: { text: '#f87171', border: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.1)' };
 
-	const passIcon = '<svg style="width:14px;height:14px;color:#10b981;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-	const failIcon = '<svg style="width:14px;height:14px;color:#ef4444;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+	const passIcon =
+		'<svg style="width:14px;height:14px;color:#10b981;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+	const failIcon =
+		'<svg style="width:14px;height:14px;color:#ef4444;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
 
 	const catColors = {
-		'Meta Tags': '#60a5fa', 'Technical': '#a78bfa', 'Indexability': '#34d399',
-		'Content': '#fbbf24', 'Links': '#22d3ee', 'Social': '#f472b6',
-		'Performance': '#fb923c', 'International': '#2dd4bf', 'URL': '#c084fc', 'Accessibility': '#38bdf8',
+		'Meta Tags': '#60a5fa',
+		Technical: '#a78bfa',
+		Indexability: '#34d399',
+		Content: '#fbbf24',
+		Links: '#22d3ee',
+		Social: '#f472b6',
+		Performance: '#fb923c',
+		International: '#2dd4bf',
+		URL: '#c084fc',
+		Accessibility: '#38bdf8',
 	};
 
 	let html = `<div class="p-4">
@@ -5927,7 +6245,7 @@ function displaySEOResults(data) {
 					</div>
 					<div>
 						<div class="text-sm text-white font-bold">SEO Score: <span style="color:${scoreHex.text}">${data.score}/100</span></div>
-						<div class="text-xs text-gray-500 mt-0.5">${data.checks.filter(c => c.pass).length}/${data.checks.length} checks passed</div>
+						<div class="text-xs text-gray-500 mt-0.5">${data.checks.filter((c) => c.pass).length}/${data.checks.length} checks passed</div>
 					</div>
 				</div>
 				<div class="text-right text-[10px] text-gray-500">
@@ -5954,9 +6272,9 @@ function displaySEOResults(data) {
 		for (const [cat, arr] of Object.entries(data.checksByCategory)) {
 			const catChecks = arr;
 			const totalW = catChecks.reduce((s, c) => s + c.weight, 0);
-			const earnedW = catChecks.filter(c => c.pass).reduce((s, c) => s + c.weight, 0);
+			const earnedW = catChecks.filter((c) => c.pass).reduce((s, c) => s + c.weight, 0);
 			const catScore = Math.round((earnedW / totalW) * 100);
-			const passed = catChecks.filter(c => c.pass).length;
+			const passed = catChecks.filter((c) => c.pass).length;
 			const barColor = catScore >= 90 ? '#10b981' : catScore >= 50 ? '#f97316' : '#ef4444';
 			const accent = catColors[cat] || '#9ca3af';
 			html += `<div class="flex items-center gap-3">
@@ -6152,7 +6470,11 @@ function displaySEOResults(data) {
 	}
 
 	// ---- Redirect & Mixed Content ----
-	if (data.wasRedirected || (data.mixedContent && data.mixedContent.length > 0) || (data.deprecatedTags && data.deprecatedTags.length > 0)) {
+	if (
+		data.wasRedirected ||
+		(data.mixedContent && data.mixedContent.length > 0) ||
+		(data.deprecatedTags && data.deprecatedTags.length > 0)
+	) {
 		html += `<div class="bg-cyber-card rounded-xl overflow-hidden mb-4" style="border:1px solid rgba(239,68,68,0.2)">
 			<div class="px-4 py-2.5" style="border-bottom:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.05)">
 				<h4 style="font-size:11px;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:0.05em">Issues & Warnings</h4>
@@ -6272,13 +6594,13 @@ function displaySEOResults(data) {
 		html += `<div class="p-4 space-y-2">
 			<div class="flex items-center gap-2">${passIcon}<span class="text-xs text-white font-semibold">robots.txt found</span></div>`;
 		if (data.robots.userAgents.length > 0) {
-			html += `<div style="font-size:10px;color:#9ca3af"><span style="color:#6b7280">User-Agents: </span>${data.robots.userAgents.map(u => '<span style="font-family:monospace;color:#d1d5db">' + escapeHtml(u) + '</span>').join(', ')}</div>`;
+			html += `<div style="font-size:10px;color:#9ca3af"><span style="color:#6b7280">User-Agents: </span>${data.robots.userAgents.map((u) => '<span style="font-family:monospace;color:#d1d5db">' + escapeHtml(u) + '</span>').join(', ')}</div>`;
 		}
 		if (data.robots.disallowedPaths.length > 0) {
-			html += `<details><summary style="font-size:10px;color:#f97316;cursor:pointer">${data.robots.disallowedPaths.length} disallowed paths</summary><div style="padding:8px 0;font-size:10px;font-family:monospace;color:#9ca3af">${data.robots.disallowedPaths.map(p => escapeHtml(p)).join('<br>')}</div></details>`;
+			html += `<details><summary style="font-size:10px;color:#f97316;cursor:pointer">${data.robots.disallowedPaths.length} disallowed paths</summary><div style="padding:8px 0;font-size:10px;font-family:monospace;color:#9ca3af">${data.robots.disallowedPaths.map((p) => escapeHtml(p)).join('<br>')}</div></details>`;
 		}
 		if (data.robots.sitemapUrls.length > 0) {
-			html += `<div style="font-size:10px;color:#9ca3af"><span style="color:#6b7280">Sitemaps in robots.txt: </span>${data.robots.sitemapUrls.map(u => '<span style="font-family:monospace;color:#22d3ee">' + escapeHtml(u) + '</span>').join('<br>')}</div>`;
+			html += `<div style="font-size:10px;color:#9ca3af"><span style="color:#6b7280">Sitemaps in robots.txt: </span>${data.robots.sitemapUrls.map((u) => '<span style="font-family:monospace;color:#22d3ee">' + escapeHtml(u) + '</span>').join('<br>')}</div>`;
 		}
 		if (data.robots.crawlDelay !== null) {
 			html += `<div style="font-size:10px;color:#f97316">Crawl-delay: ${data.robots.crawlDelay}s</div>`;
@@ -6302,10 +6624,10 @@ function displaySEOResults(data) {
 			html += `<div style="font-size:10px;color:#6b7280">Last modified: <span style="color:#d1d5db">${escapeHtml(data.sitemap.lastmod)}</span></div>`;
 		}
 		if (data.sitemap.nestedSitemaps.length > 0) {
-			html += `<details><summary style="font-size:10px;color:#22d3ee;cursor:pointer">${data.sitemap.nestedSitemaps.length} nested sitemaps</summary><div style="padding:8px 0;font-size:9px;font-family:monospace;color:#6b7280;word-break:break-all">${data.sitemap.nestedSitemaps.map(u => escapeHtml(u)).join('<br>')}</div></details>`;
+			html += `<details><summary style="font-size:10px;color:#22d3ee;cursor:pointer">${data.sitemap.nestedSitemaps.length} nested sitemaps</summary><div style="padding:8px 0;font-size:9px;font-family:monospace;color:#6b7280;word-break:break-all">${data.sitemap.nestedSitemaps.map((u) => escapeHtml(u)).join('<br>')}</div></details>`;
 		}
 		if (data.sitemap.sampleUrls.length > 0) {
-			html += `<details><summary style="font-size:10px;color:#9ca3af;cursor:pointer">Sample URLs (${data.sitemap.sampleUrls.length})</summary><div style="padding:8px 0;font-size:9px;font-family:monospace;color:#6b7280;word-break:break-all">${data.sitemap.sampleUrls.map(u => escapeHtml(u)).join('<br>')}</div></details>`;
+			html += `<details><summary style="font-size:10px;color:#9ca3af;cursor:pointer">Sample URLs (${data.sitemap.sampleUrls.length})</summary><div style="padding:8px 0;font-size:9px;font-family:monospace;color:#6b7280;word-break:break-all">${data.sitemap.sampleUrls.map((u) => escapeHtml(u)).join('<br>')}</div></details>`;
 		}
 		html += `</div>`;
 	} else {
@@ -6386,8 +6708,10 @@ function displaySEOResults(data) {
 					<span style="font-size:11px;font-family:monospace;color:#d1d5db;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${escapeHtml(page.url)}</span>
 					<span style="font-size:9px;color:${pageColor};font-weight:700">${issueCount === 0 ? 'OK' : issueCount + ' issue' + (issueCount > 1 ? 's' : '')}</span>
 				</div>`;
-			if (page.title) html += `<div style="font-size:10px;color:#9ca3af">Title: <span style="color:#d1d5db">${escapeHtml(page.title.substring(0, 60))}</span></div>`;
-			if (page.h1) html += `<div style="font-size:10px;color:#9ca3af">H1: <span style="color:#d1d5db">${escapeHtml(page.h1.substring(0, 60))}</span></div>`;
+			if (page.title)
+				html += `<div style="font-size:10px;color:#9ca3af">Title: <span style="color:#d1d5db">${escapeHtml(page.title.substring(0, 60))}</span></div>`;
+			if (page.h1)
+				html += `<div style="font-size:10px;color:#9ca3af">H1: <span style="color:#d1d5db">${escapeHtml(page.h1.substring(0, 60))}</span></div>`;
 			html += `<div style="font-size:9px;color:#6b7280">${page.wordCount} words</div>`;
 			if (page.issues.length > 0) {
 				html += `<div class="flex flex-wrap gap-1 mt-1">`;
@@ -6433,13 +6757,13 @@ function displaySEOResults(data) {
 	// ---- Detailed Check Results ----
 	html += `<details open class="bg-cyber-card rounded-xl overflow-hidden mb-4" style="border:1px solid rgba(132,204,22,0.2)">
 		<summary class="px-4 py-2.5 cursor-pointer" style="border-bottom:1px solid rgba(132,204,22,0.2);background:rgba(132,204,22,0.05)">
-			<span style="font-size:11px;font-weight:700;color:#a3e635;text-transform:uppercase;letter-spacing:0.05em">All Checks (${data.checks.filter(c => c.pass).length}/${data.checks.length} passed)</span>
+			<span style="font-size:11px;font-weight:700;color:#a3e635;text-transform:uppercase;letter-spacing:0.05em">All Checks (${data.checks.filter((c) => c.pass).length}/${data.checks.length} passed)</span>
 		</summary>`;
 	if (data.checksByCategory) {
 		for (const [cat, arr] of Object.entries(data.checksByCategory)) {
 			const cc = catColors[cat] || '#9ca3af';
 			const catChecks = arr;
-			const passed = catChecks.filter(c => c.pass).length;
+			const passed = catChecks.filter((c) => c.pass).length;
 			html += `<div style="border-bottom:1px solid rgba(132,204,22,0.08)">
 				<div class="px-4 py-2 flex items-center justify-between" style="background:rgba(0,0,0,0.15)">
 					<span style="font-size:10px;font-weight:700;color:${cc};text-transform:uppercase">${cat}</span>
@@ -6469,7 +6793,10 @@ function displaySEOResults(data) {
 async function runSpeedTest() {
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	if (!url) { showAlert('Please enter a target URL first.', 'Missing URL', 'warning'); return; }
+	if (!url) {
+		showAlert('Please enter a target URL first.', 'Missing URL', 'warning');
+		return;
+	}
 	if (url !== urlInput.value) urlInput.value = url;
 
 	const resultsDiv = document.getElementById('results');
@@ -6500,15 +6827,21 @@ function displaySpeedTestResults(data) {
 		if (bytes >= 1024) return (bytes / 1024).toFixed(1) + ' KB';
 		return bytes + ' B';
 	};
-	const fmtMs = (ms) => ms !== null && ms !== undefined ? ms + 'ms' : 'N/A';
+	const fmtMs = (ms) => (ms !== null && ms !== undefined ? ms + 'ms' : 'N/A');
 	// Grade colors as hex for inline styles (html2canvas compatible)
-	const gradeHex = data.score >= 90 ? { text: '#34d399', border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.1)' } :
-		data.score >= 80 ? { text: '#22d3ee', border: 'rgba(6,182,212,0.3)', bg: 'rgba(6,182,212,0.1)' } :
-		data.score >= 70 ? { text: '#facc15', border: 'rgba(234,179,8,0.3)', bg: 'rgba(234,179,8,0.1)' } :
-		data.score >= 50 ? { text: '#fb923c', border: 'rgba(249,115,22,0.3)', bg: 'rgba(249,115,22,0.1)' } :
-		{ text: '#f87171', border: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.1)' };
-	const barHex = (val, good, ok) => val <= good ? '#10b981' : val <= ok ? '#eab308' : '#ef4444';
-	const pctBar = (val, max, good, ok) => `<div style="width:100%;background:rgba(55,65,81,0.5);border-radius:9999px;height:6px;margin-top:4px"><div style="width:${Math.min(100, (val / max) * 100)}%;background:${barHex(val, good, ok)};height:6px;border-radius:9999px"></div></div>`;
+	const gradeHex =
+		data.score >= 90
+			? { text: '#34d399', border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.1)' }
+			: data.score >= 80
+				? { text: '#22d3ee', border: 'rgba(6,182,212,0.3)', bg: 'rgba(6,182,212,0.1)' }
+				: data.score >= 70
+					? { text: '#facc15', border: 'rgba(234,179,8,0.3)', bg: 'rgba(234,179,8,0.1)' }
+					: data.score >= 50
+						? { text: '#fb923c', border: 'rgba(249,115,22,0.3)', bg: 'rgba(249,115,22,0.1)' }
+						: { text: '#f87171', border: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.1)' };
+	const barHex = (val, good, ok) => (val <= good ? '#10b981' : val <= ok ? '#eab308' : '#ef4444');
+	const pctBar = (val, max, good, ok) =>
+		`<div style="width:100%;background:rgba(55,65,81,0.5);border-radius:9999px;height:6px;margin-top:4px"><div style="width:${Math.min(100, (val / max) * 100)}%;background:${barHex(val, good, ok)};height:6px;border-radius:9999px"></div></div>`;
 
 	let html = `<div class="p-4">
 		<!-- Header -->
@@ -6596,10 +6929,18 @@ function displaySpeedTestResults(data) {
 			const vitalCard = (label, metric) => {
 				if (!metric) return '';
 				const color = metric.score >= 0.9 ? '#10b981' : metric.score >= 0.5 ? '#f97316' : '#ef4444';
-				return '<div style="background:var(--cyber-card,#161b22);padding:12px;text-align:center">' +
-					'<span class="text-[10px] text-gray-500 uppercase" style="display:block">' + label + '</span>' +
-					'<span style="font-size:16px;font-weight:700;font-family:monospace;color:' + color + '">' + escapeHtml(metric.value) + '</span>' +
-				'</div>';
+				return (
+					'<div style="background:var(--cyber-card,#161b22);padding:12px;text-align:center">' +
+					'<span class="text-[10px] text-gray-500 uppercase" style="display:block">' +
+					label +
+					'</span>' +
+					'<span style="font-size:16px;font-weight:700;font-family:monospace;color:' +
+					color +
+					'">' +
+					escapeHtml(metric.value) +
+					'</span>' +
+					'</div>'
+				);
 			};
 			html += `<div class="grid grid-cols-3 md:grid-cols-6 gap-px bg-indigo-500/10 border-t border-indigo-500/10">
 				${vitalCard('FCP', wv.fcp)}
@@ -6614,7 +6955,7 @@ function displaySpeedTestResults(data) {
 		// Detailed checks (expandable)
 		const renderChecks = (title, checks, color) => {
 			if (!checks || checks.length === 0) return '';
-			const passed = checks.filter(c => c.pass).length;
+			const passed = checks.filter((c) => c.pass).length;
 			let h = `<details class="border-t border-indigo-500/10">
 				<summary class="px-4 py-2 bg-indigo-500/5 cursor-pointer flex items-center justify-between">
 					<span class="text-[10px] text-indigo-400 uppercase font-bold">${title}</span>
@@ -6688,7 +7029,7 @@ function displaySpeedTestResults(data) {
 		{ label: 'CSS', size: data.sizes.css, hex: '#a855f7' },
 		{ label: 'Images', size: data.sizes.images, hex: '#22c55e' },
 		{ label: 'Fonts', size: data.sizes.fonts, hex: '#ec4899' },
-	].filter(s => s.size > 0);
+	].filter((s) => s.size > 0);
 
 	for (const item of sizeItems) {
 		const pct = Math.max(1, (item.size / data.sizes.total) * 100);
@@ -6729,9 +7070,10 @@ function displaySpeedTestResults(data) {
 
 	// Performance Indicators
 	const perf = data.performance;
-	const checkIcon = (ok) => ok
-		? '<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
-		: '<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+	const checkIcon = (ok) =>
+		ok
+			? '<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+			: '<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
 
 	html += `<div class="bg-cyber-card border border-amber-500/20 rounded-xl overflow-hidden mb-4">
 		<div class="px-4 py-2.5 border-b border-amber-500/20 bg-amber-500/5">
@@ -6800,13 +7142,18 @@ function displaySpeedTestResults(data) {
 	// Resources waterfall (top 15 slowest)
 	if (data.resources && data.resources.length > 0) {
 		const sorted = [...data.resources].sort((a, b) => b.time - a.time);
-		const maxTime = Math.max(...sorted.map(r => r.time), 1);
+		const maxTime = Math.max(...sorted.map((r) => r.time), 1);
 		html += `<details open class="bg-cyber-card border border-amber-500/20 rounded-xl overflow-hidden mb-4">
 			<summary class="px-4 py-2.5 border-b border-amber-500/20 bg-amber-500/5 cursor-pointer">
 				<span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Resource Waterfall (${data.resources.length} resources)</span>
 			</summary>
 			<div class="divide-y divide-amber-500/10">`;
-		const typeColors = { css: { hex: '#a855f7', bg: 'rgba(168,85,247,0.13)' }, js: { hex: '#eab308', bg: 'rgba(234,179,8,0.13)' }, image: { hex: '#22c55e', bg: 'rgba(34,197,94,0.13)' }, font: { hex: '#ec4899', bg: 'rgba(236,72,153,0.13)' } };
+		const typeColors = {
+			css: { hex: '#a855f7', bg: 'rgba(168,85,247,0.13)' },
+			js: { hex: '#eab308', bg: 'rgba(234,179,8,0.13)' },
+			image: { hex: '#22c55e', bg: 'rgba(34,197,94,0.13)' },
+			font: { hex: '#ec4899', bg: 'rgba(236,72,153,0.13)' },
+		};
 		for (const r of sorted.slice(0, 20)) {
 			const barW = Math.max(2, (r.time / maxTime) * 100);
 			const tc = typeColors[r.type] || { hex: '#6b7280', bg: 'rgba(107,114,128,0.13)' };
@@ -6841,7 +7188,10 @@ function displaySpeedTestResults(data) {
 async function runFullRecon() {
 	const urlInput = document.getElementById('url');
 	const url = normalizeUrl(urlInput.value);
-	if (!url) { showAlert('Please enter a target URL first.', 'Missing URL', 'warning'); return; }
+	if (!url) {
+		showAlert('Please enter a target URL first.', 'Missing URL', 'warning');
+		return;
+	}
 	if (url !== urlInput.value) urlInput.value = url;
 
 	const resultsDiv = document.getElementById('results');
@@ -6858,7 +7208,8 @@ async function runFullRecon() {
 		if (!resp.ok) throw new Error(data.message || data.error || `HTTP ${resp.status}`);
 		displayFullReconResults(data);
 	} catch (e) {
-		const msg = e.name === 'AbortError' ? 'Request timed out after 30 seconds. The target site may be too slow or blocking requests.' : e.message;
+		const msg =
+			e.name === 'AbortError' ? 'Request timed out after 30 seconds. The target site may be too slow or blocking requests.' : e.message;
 		resultsDiv.innerHTML = `<div class="text-center py-10"><p class="text-cyber-danger font-bold">Full Reconnaissance Failed</p><p class="text-gray-400 text-sm mt-2">${escapeHtml(msg)}</p><button onclick="runFullRecon()" class="mt-4 px-4 py-2 bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-all text-sm">Retry</button></div>`;
 	}
 }
@@ -6868,51 +7219,51 @@ function displayFullReconResults(data) {
 	const resultsDiv = document.getElementById('results');
 	// Inline style colors for category badges (html2canvas compatible)
 	const catColors = {
-		'CMS':            { bg: 'rgba(236,72,153,0.15)', color: '#f472b6', border: 'rgba(236,72,153,0.3)' },
+		CMS: { bg: 'rgba(236,72,153,0.15)', color: '#f472b6', border: 'rgba(236,72,153,0.3)' },
 		'CMS/E-commerce': { bg: 'rgba(236,72,153,0.15)', color: '#f472b6', border: 'rgba(236,72,153,0.3)' },
-		'Framework':      { bg: 'rgba(59,130,246,0.15)', color: '#60a5fa', border: 'rgba(59,130,246,0.3)' },
-		'Frontend':       { bg: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: 'rgba(139,92,246,0.3)' },
-		'Language':       { bg: 'rgba(234,179,8,0.15)', color: '#facc15', border: 'rgba(234,179,8,0.3)' },
-		'Web Server':     { bg: 'rgba(249,115,22,0.15)', color: '#fb923c', border: 'rgba(249,115,22,0.3)' },
-		'CDN/WAF':        { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
-		'CDN':            { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
-		'Cache':          { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
-		'Platform':       { bg: 'rgba(99,102,241,0.15)', color: '#818cf8', border: 'rgba(99,102,241,0.3)' },
-		'Analytics':      { bg: 'rgba(34,197,94,0.15)', color: '#4ade80', border: 'rgba(34,197,94,0.3)' },
-		'Security':       { bg: 'rgba(239,68,68,0.15)', color: '#f87171', border: 'rgba(239,68,68,0.3)' },
-		'Generator':      { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.3)' },
+		Framework: { bg: 'rgba(59,130,246,0.15)', color: '#60a5fa', border: 'rgba(59,130,246,0.3)' },
+		Frontend: { bg: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: 'rgba(139,92,246,0.3)' },
+		Language: { bg: 'rgba(234,179,8,0.15)', color: '#facc15', border: 'rgba(234,179,8,0.3)' },
+		'Web Server': { bg: 'rgba(249,115,22,0.15)', color: '#fb923c', border: 'rgba(249,115,22,0.3)' },
+		'CDN/WAF': { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
+		CDN: { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
+		Cache: { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
+		Platform: { bg: 'rgba(99,102,241,0.15)', color: '#818cf8', border: 'rgba(99,102,241,0.3)' },
+		Analytics: { bg: 'rgba(34,197,94,0.15)', color: '#4ade80', border: 'rgba(34,197,94,0.3)' },
+		Security: { bg: 'rgba(239,68,68,0.15)', color: '#f87171', border: 'rgba(239,68,68,0.3)' },
+		Generator: { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.3)' },
 		'Website Builder': { bg: 'rgba(20,184,166,0.15)', color: '#2dd4bf', border: 'rgba(20,184,166,0.3)' },
-		'JS Library':     { bg: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: 'rgba(245,158,11,0.3)' },
-		'E-commerce':     { bg: 'rgba(236,72,153,0.15)', color: '#f472b6', border: 'rgba(236,72,153,0.3)' },
-		'SEO':            { bg: 'rgba(132,204,22,0.15)', color: '#a3e635', border: 'rgba(132,204,22,0.3)' },
-		'Font':           { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8', border: 'rgba(100,116,139,0.3)' },
-		'Chat':           { bg: 'rgba(14,165,233,0.15)', color: '#38bdf8', border: 'rgba(14,165,233,0.3)' },
-		'Marketing':      { bg: 'rgba(192,38,211,0.15)', color: '#e879f9', border: 'rgba(192,38,211,0.3)' },
+		'JS Library': { bg: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: 'rgba(245,158,11,0.3)' },
+		'E-commerce': { bg: 'rgba(236,72,153,0.15)', color: '#f472b6', border: 'rgba(236,72,153,0.3)' },
+		SEO: { bg: 'rgba(132,204,22,0.15)', color: '#a3e635', border: 'rgba(132,204,22,0.3)' },
+		Font: { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8', border: 'rgba(100,116,139,0.3)' },
+		Chat: { bg: 'rgba(14,165,233,0.15)', color: '#38bdf8', border: 'rgba(14,165,233,0.3)' },
+		Marketing: { bg: 'rgba(192,38,211,0.15)', color: '#e879f9', border: 'rgba(192,38,211,0.3)' },
 	};
 	const defaultCatColor = { bg: 'rgba(107,114,128,0.15)', color: '#9ca3af', border: 'rgba(107,114,128,0.3)' };
 
 	// CMS logos: use real logos from Simple Icons CDN
 	const cmsLogos = {
-		'WordPress': '<img src="https://cdn.simpleicons.org/wordpress/21759b" alt="WordPress" class="w-8 h-8">',
-		'Drupal': '<img src="https://cdn.simpleicons.org/drupal/0678be" alt="Drupal" class="w-8 h-8">',
-		'Joomla': '<img src="https://cdn.simpleicons.org/joomla/5091cd" alt="Joomla" class="w-8 h-8">',
-		'Shopify': '<img src="https://cdn.simpleicons.org/shopify/7ab55c" alt="Shopify" class="w-8 h-8">',
-		'Magento': '<img src="https://cdn.simpleicons.org/magento/ee672f" alt="Magento" class="w-8 h-8">',
-		'PrestaShop': '<img src="https://cdn.simpleicons.org/prestashop/df0067" alt="PrestaShop" class="w-8 h-8">',
-		'Ghost': '<img src="https://cdn.simpleicons.org/ghost/ffffff" alt="Ghost" class="w-8 h-8">',
-		'TYPO3': '<img src="https://cdn.simpleicons.org/typo3/ff8700" alt="TYPO3" class="w-8 h-8">',
-		'Wix': '<img src="https://cdn.simpleicons.org/wix/0c6efc" alt="Wix" class="w-8 h-8">',
-		'Squarespace': '<img src="https://cdn.simpleicons.org/squarespace/ffffff" alt="Squarespace" class="w-8 h-8">',
-		'Webflow': '<img src="https://cdn.simpleicons.org/webflow/4353ff" alt="Webflow" class="w-8 h-8">',
-		'Hugo': '<img src="https://cdn.simpleicons.org/hugo/ff4088" alt="Hugo" class="w-8 h-8">',
+		WordPress: '<img src="https://cdn.simpleicons.org/wordpress/21759b" alt="WordPress" class="w-8 h-8">',
+		Drupal: '<img src="https://cdn.simpleicons.org/drupal/0678be" alt="Drupal" class="w-8 h-8">',
+		Joomla: '<img src="https://cdn.simpleicons.org/joomla/5091cd" alt="Joomla" class="w-8 h-8">',
+		Shopify: '<img src="https://cdn.simpleicons.org/shopify/7ab55c" alt="Shopify" class="w-8 h-8">',
+		Magento: '<img src="https://cdn.simpleicons.org/magento/ee672f" alt="Magento" class="w-8 h-8">',
+		PrestaShop: '<img src="https://cdn.simpleicons.org/prestashop/df0067" alt="PrestaShop" class="w-8 h-8">',
+		Ghost: '<img src="https://cdn.simpleicons.org/ghost/ffffff" alt="Ghost" class="w-8 h-8">',
+		TYPO3: '<img src="https://cdn.simpleicons.org/typo3/ff8700" alt="TYPO3" class="w-8 h-8">',
+		Wix: '<img src="https://cdn.simpleicons.org/wix/0c6efc" alt="Wix" class="w-8 h-8">',
+		Squarespace: '<img src="https://cdn.simpleicons.org/squarespace/ffffff" alt="Squarespace" class="w-8 h-8">',
+		Webflow: '<img src="https://cdn.simpleicons.org/webflow/4353ff" alt="Webflow" class="w-8 h-8">',
+		Hugo: '<img src="https://cdn.simpleicons.org/hugo/ff4088" alt="Hugo" class="w-8 h-8">',
 		'Next.js': '<img src="https://cdn.simpleicons.org/nextdotjs/ffffff" alt="Next.js" class="w-8 h-8">',
-		'Gatsby': '<img src="https://cdn.simpleicons.org/gatsby/663399" alt="Gatsby" class="w-8 h-8">',
-		'Nuxt': '<img src="https://cdn.simpleicons.org/nuxtdotjs/00dc82" alt="Nuxt" class="w-8 h-8">',
-		'Laravel': '<img src="https://cdn.simpleicons.org/laravel/ff2d20" alt="Laravel" class="w-8 h-8">',
-		'Django': '<img src="https://cdn.simpleicons.org/django/092e20" alt="Django" class="w-8 h-8">',
+		Gatsby: '<img src="https://cdn.simpleicons.org/gatsby/663399" alt="Gatsby" class="w-8 h-8">',
+		Nuxt: '<img src="https://cdn.simpleicons.org/nuxtdotjs/00dc82" alt="Nuxt" class="w-8 h-8">',
+		Laravel: '<img src="https://cdn.simpleicons.org/laravel/ff2d20" alt="Laravel" class="w-8 h-8">',
+		Django: '<img src="https://cdn.simpleicons.org/django/092e20" alt="Django" class="w-8 h-8">',
 		'Craft CMS': '<img src="https://cdn.simpleicons.org/craftcms/e5422b" alt="Craft CMS" class="w-8 h-8">',
-		'Contentful': '<img src="https://cdn.simpleicons.org/contentful/2478cc" alt="Contentful" class="w-8 h-8">',
-		'Strapi': '<img src="https://cdn.simpleicons.org/strapi/4945ff" alt="Strapi" class="w-8 h-8">',
+		Contentful: '<img src="https://cdn.simpleicons.org/contentful/2478cc" alt="Contentful" class="w-8 h-8">',
+		Strapi: '<img src="https://cdn.simpleicons.org/strapi/4945ff" alt="Strapi" class="w-8 h-8">',
 	};
 
 	let html = `<div class="p-4">
@@ -6956,45 +7307,109 @@ function displayFullReconResults(data) {
 	// === Section 2: Domain WHOIS (RDAP) ===
 	console.log('[WAF-Checker] domainWhois data:', data.domainWhois);
 	try {
-	if (data.domainWhois) {
-		const dw = data.domainWhois;
-		const crDate = dw.creationDate ? new Date(dw.creationDate) : null;
-		const expDate = dw.expirationDate ? new Date(dw.expirationDate) : null;
-		const chgDate = dw.lastChanged ? new Date(dw.lastChanged) : null;
-		const dwDaysLeft = expDate ? Math.ceil((expDate.getTime() - Date.now()) / 86400000) : null;
-		const expColor = dwDaysLeft === null ? 'text-gray-500' : dwDaysLeft > 90 ? 'text-emerald-400' : dwDaysLeft > 30 ? 'text-yellow-400' : 'text-red-400';
-		const domAge = crDate ? Math.floor((Date.now() - crDate.getTime()) / (86400000 * 365.25)) : null;
-		const fDate = (d) => d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+		if (data.domainWhois) {
+			const dw = data.domainWhois;
+			const crDate = dw.creationDate ? new Date(dw.creationDate) : null;
+			const expDate = dw.expirationDate ? new Date(dw.expirationDate) : null;
+			const chgDate = dw.lastChanged ? new Date(dw.lastChanged) : null;
+			const dwDaysLeft = expDate ? Math.ceil((expDate.getTime() - Date.now()) / 86400000) : null;
+			const expColor =
+				dwDaysLeft === null ? 'text-gray-500' : dwDaysLeft > 90 ? 'text-emerald-400' : dwDaysLeft > 30 ? 'text-yellow-400' : 'text-red-400';
+			const domAge = crDate ? Math.floor((Date.now() - crDate.getTime()) / (86400000 * 365.25)) : null;
+			const fDate = (d) => (d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A');
 
-		// Helper to render a contact card
-		const renderContact = (label, contact, iconSvg) => {
-			if (!contact) return '';
-			const fields = [];
-			if (contact.name) fields.push({icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', val: contact.name, color: '#fff', bold: true, size: '12px'});
-			if (contact.org && contact.org !== contact.name) fields.push({icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', val: contact.org, color: '#d1d5db', bold: false, size: '11px'});
-			if (contact.email) fields.push({icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', val: contact.email, color: '#22d3ee', bold: false, size: '11px', mono: true});
-			if (contact.phone) fields.push({icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', val: contact.phone, color: '#9ca3af', bold: false, size: '11px', mono: true});
-			const loc = [contact.address, contact.country && !contact.address?.includes(contact.country) ? contact.country : null].filter(Boolean).join(', ');
-			if (loc) fields.push({icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z', val: loc, color: '#6b7280', bold: false, size: '10px'});
-			if (fields.length === 0) return '';
-			const rowsHtml = fields.map(f => '<div style="display:block;padding:4px 0;border-bottom:1px solid rgba(99,102,241,0.07)">' +
-				'<span style="display:inline-block;width:16px;vertical-align:middle;margin-right:6px">' +
-				'<svg style="width:12px;height:12px;color:#4b5563" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' + f.icon + '"/></svg></span>' +
-				'<span style="font-size:' + f.size + ';color:' + f.color + (f.bold ? ';font-weight:700' : '') + (f.mono ? ';font-family:monospace' : '') + ';word-break:break-all">' + escapeHtml(f.val) + '</span></div>'
-			).join('');
-			return '<div style="background:var(--cyber-card,#0d1117);padding:12px">' +
-				'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' + iconSvg + '<span style="font-size:10px;color:rgba(129,140,248,0.8);text-transform:uppercase;font-weight:700;letter-spacing:0.05em">' + escapeHtml(label) + '</span></div>' +
-				rowsHtml + '</div>';
-		};
+			// Helper to render a contact card
+			const renderContact = (label, contact, iconSvg) => {
+				if (!contact) return '';
+				const fields = [];
+				if (contact.name)
+					fields.push({
+						icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
+						val: contact.name,
+						color: '#fff',
+						bold: true,
+						size: '12px',
+					});
+				if (contact.org && contact.org !== contact.name)
+					fields.push({
+						icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+						val: contact.org,
+						color: '#d1d5db',
+						bold: false,
+						size: '11px',
+					});
+				if (contact.email)
+					fields.push({
+						icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+						val: contact.email,
+						color: '#22d3ee',
+						bold: false,
+						size: '11px',
+						mono: true,
+					});
+				if (contact.phone)
+					fields.push({
+						icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z',
+						val: contact.phone,
+						color: '#9ca3af',
+						bold: false,
+						size: '11px',
+						mono: true,
+					});
+				const loc = [contact.address, contact.country && !contact.address?.includes(contact.country) ? contact.country : null]
+					.filter(Boolean)
+					.join(', ');
+				if (loc)
+					fields.push({
+						icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z',
+						val: loc,
+						color: '#6b7280',
+						bold: false,
+						size: '10px',
+					});
+				if (fields.length === 0) return '';
+				const rowsHtml = fields
+					.map(
+						(f) =>
+							'<div style="display:block;padding:4px 0;border-bottom:1px solid rgba(99,102,241,0.07)">' +
+							'<span style="display:inline-block;width:16px;vertical-align:middle;margin-right:6px">' +
+							'<svg style="width:12px;height:12px;color:#4b5563" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' +
+							f.icon +
+							'"/></svg></span>' +
+							'<span style="font-size:' +
+							f.size +
+							';color:' +
+							f.color +
+							(f.bold ? ';font-weight:700' : '') +
+							(f.mono ? ';font-family:monospace' : '') +
+							';word-break:break-all">' +
+							escapeHtml(f.val) +
+							'</span></div>',
+					)
+					.join('');
+				return (
+					'<div style="background:var(--cyber-card,#0d1117);padding:12px">' +
+					'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+					iconSvg +
+					'<span style="font-size:10px;color:rgba(129,140,248,0.8);text-transform:uppercase;font-weight:700;letter-spacing:0.05em">' +
+					escapeHtml(label) +
+					'</span></div>' +
+					rowsHtml +
+					'</div>'
+				);
+			};
 
-		const contactIcons = {
-			registrant: '<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
-			admin: '<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
-			tech: '<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
-			abuse: '<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
-		};
+			const contactIcons = {
+				registrant:
+					'<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
+				admin:
+					'<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
+				tech: '<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+				abuse:
+					'<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
+			};
 
-		html += `<div class="bg-cyber-card border border-indigo-500/20 rounded-xl overflow-hidden mb-4">
+			html += `<div class="bg-cyber-card border border-indigo-500/20 rounded-xl overflow-hidden mb-4">
 			<div class="px-4 py-2.5 border-b border-indigo-500/20 bg-indigo-500/5 flex items-center">
 				<h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Domain WHOIS — ${escapeHtml(dw.domainName || data.hostname)}</h4>
 				${reconTip('Domain registration data via RDAP: registrar, owner, contacts, dates, status, and DNSSEC.')}
@@ -7020,15 +7435,15 @@ function displayFullReconResults(data) {
 				</div>
 			</div>`;
 
-		// Contacts section
-		const contactCards = [];
-		contactCards.push(renderContact('Registrant (Owner)', dw.registrant, contactIcons.registrant));
-		contactCards.push(renderContact('Administrative', dw.adminContact, contactIcons.admin));
-		contactCards.push(renderContact('Technical', dw.techContact, contactIcons.tech));
-		contactCards.push(renderContact('Abuse', dw.abuseContact, contactIcons.abuse));
-		const validContacts = contactCards.filter(c => c);
-		if (validContacts.length > 0) {
-			html += `<div class="border-t border-indigo-500/10">
+			// Contacts section
+			const contactCards = [];
+			contactCards.push(renderContact('Registrant (Owner)', dw.registrant, contactIcons.registrant));
+			contactCards.push(renderContact('Administrative', dw.adminContact, contactIcons.admin));
+			contactCards.push(renderContact('Technical', dw.techContact, contactIcons.tech));
+			contactCards.push(renderContact('Abuse', dw.abuseContact, contactIcons.abuse));
+			const validContacts = contactCards.filter((c) => c);
+			if (validContacts.length > 0) {
+				html += `<div class="border-t border-indigo-500/10">
 				<div class="px-4 py-2 bg-indigo-500/5">
 					<h5 class="text-[10px] font-bold text-indigo-400/70 uppercase tracking-wider">Contacts</h5>
 				</div>
@@ -7036,35 +7451,39 @@ function displayFullReconResults(data) {
 					${validContacts.join('')}
 				</div>
 			</div>`;
-		}
+			}
 
-		if (dw.status && dw.status.length > 0) {
-			html += `<div class="px-4 py-2 border-t border-indigo-500/10">
+			if (dw.status && dw.status.length > 0) {
+				html += `<div class="px-4 py-2 border-t border-indigo-500/10">
 				<span class="text-[10px] text-gray-500 uppercase block mb-1">Domain Status</span>
 				<div class="flex flex-wrap gap-1">
-					${dw.status.map(s => {
-						const isOk = s.includes('ok') || s.includes('active');
-						const isLock = s.includes('Lock') || s.includes('Prohibited');
-						const color = isOk ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
-							isLock ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30' :
-							'text-gray-400 bg-gray-500/10 border-gray-500/30';
-						return `<span class="text-[9px] px-1.5 py-0.5 rounded border ${color} font-mono">${escapeHtml(s)}</span>`;
-					}).join('')}
+					${dw.status
+						.map((s) => {
+							const isOk = s.includes('ok') || s.includes('active');
+							const isLock = s.includes('Lock') || s.includes('Prohibited');
+							const color = isOk
+								? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+								: isLock
+									? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30'
+									: 'text-gray-400 bg-gray-500/10 border-gray-500/30';
+							return `<span class="text-[9px] px-1.5 py-0.5 rounded border ${color} font-mono">${escapeHtml(s)}</span>`;
+						})
+						.join('')}
 				</div>
 			</div>`;
-		}
-		html += `</div>`;
-	} else {
-		// RDAP data unavailable — show fallback
-		html += `<div class="bg-cyber-card border border-indigo-500/20 rounded-xl overflow-hidden mb-4">
+			}
+			html += `</div>`;
+		} else {
+			// RDAP data unavailable — show fallback
+			html += `<div class="bg-cyber-card border border-indigo-500/20 rounded-xl overflow-hidden mb-4">
 			<div class="px-4 py-2.5 border-b border-indigo-500/20 bg-indigo-500/5 flex items-center">
 				<h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Domain WHOIS</h4>
 				${reconTip('Domain registration data via RDAP: registrar, owner, contacts, dates, status, and DNSSEC.')}
 			</div>
 			<div class="p-4 text-center text-gray-500 text-xs">RDAP data unavailable for this domain (timeout or unsupported TLD)</div>
 		</div>`;
-	}
-	} catch(whoisErr) {
+		}
+	} catch (whoisErr) {
 		console.error('[WAF-Checker] Domain WHOIS rendering error:', whoisErr);
 		html += `<div class="bg-cyber-card border border-indigo-500/20 rounded-xl overflow-hidden mb-4">
 			<div class="px-4 py-2.5 border-b border-indigo-500/20 bg-indigo-500/5 flex items-center">
@@ -7082,16 +7501,23 @@ function displayFullReconResults(data) {
 	const sslScore = ssl.score || 0;
 
 	const statusBadge = (s) => {
-		if (s === 'ok') return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">OK</span>';
-		if (s === 'warning') return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 whitespace-nowrap">WARNING</span>';
-		if (s === 'fail') return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-red-500/20 text-red-400 border border-red-500/30 whitespace-nowrap">FAIL</span>';
+		if (s === 'ok')
+			return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">OK</span>';
+		if (s === 'warning')
+			return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 whitespace-nowrap">WARNING</span>';
+		if (s === 'fail')
+			return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-red-500/20 text-red-400 border border-red-500/30 whitespace-nowrap">FAIL</span>';
 		return '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 whitespace-nowrap">INFO</span>';
 	};
 
-	const gradeColor = sslScore >= 90 ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' :
-		sslScore >= 70 ? 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10' :
-		sslScore >= 50 ? 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10' :
-		'text-red-400 border-red-500/30 bg-red-500/10';
+	const gradeColor =
+		sslScore >= 90
+			? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'
+			: sslScore >= 70
+				? 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10'
+				: sslScore >= 50
+					? 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10'
+					: 'text-red-400 border-red-500/30 bg-red-500/10';
 
 	html += `<div class="bg-cyber-card border border-emerald-500/20 rounded-xl overflow-hidden mb-4">
 		<div class="px-4 py-2.5 border-b border-emerald-500/20 bg-emerald-500/5 flex items-center justify-between">
@@ -7126,17 +7552,18 @@ function displayFullReconResults(data) {
 			</div>
 			<div class="divide-y divide-emerald-500/10">`;
 		for (const proto of ssl.tlsInfo.protocols) {
-			const badge = proto.supported === true
-				? '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">SUPPORTED</span>'
-				: proto.supported === false
-				? '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-red-500/20 text-red-400 border border-red-500/30 whitespace-nowrap">DISABLED</span>'
-				: '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-gray-500/20 text-gray-400 border border-gray-500/30 whitespace-nowrap">UNKNOWN</span>';
-			const nameColor = (proto.name === 'TLS 1.0' || proto.name === 'TLS 1.1') ? 'text-gray-500' : 'text-white';
+			const badge =
+				proto.supported === true
+					? '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">SUPPORTED</span>'
+					: proto.supported === false
+						? '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-red-500/20 text-red-400 border border-red-500/30 whitespace-nowrap">DISABLED</span>'
+						: '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-gray-500/20 text-gray-400 border border-gray-500/30 whitespace-nowrap">UNKNOWN</span>';
+			const nameColor = proto.name === 'TLS 1.0' || proto.name === 'TLS 1.1' ? 'text-gray-500' : 'text-white';
 			html += `<div class="flex items-center justify-between px-4 py-1.5">
 				<div class="flex items-center gap-3">
 					${badge}
 					<span class="text-xs font-bold ${nameColor}">${escapeHtml(proto.name)}</span>
-					${(proto.name === 'TLS 1.0' || proto.name === 'TLS 1.1') ? '<span class="text-[8px] px-1 py-0.5 rounded bg-red-500/10 text-red-400/70 border border-red-500/20 font-bold">DEPRECATED</span>' : ''}
+					${proto.name === 'TLS 1.0' || proto.name === 'TLS 1.1' ? '<span class="text-[8px] px-1 py-0.5 rounded bg-red-500/10 text-red-400/70 border border-red-500/20 font-bold">DEPRECATED</span>' : ''}
 				</div>
 				<span class="text-[10px] text-gray-500 text-right">${escapeHtml(proto.note)}</span>
 			</div>`;
@@ -7168,8 +7595,15 @@ function displayFullReconResults(data) {
 		const notAfter = cert.notAfter ? new Date(cert.notAfter) : null;
 		const notBefore = cert.notBefore ? new Date(cert.notBefore) : null;
 		const certDaysLeft = notAfter ? Math.ceil((notAfter.getTime() - Date.now()) / 86400000) : null;
-		const validityColor = certDaysLeft === null ? 'text-gray-600' : certDaysLeft > 30 ? 'text-emerald-400' : certDaysLeft > 0 ? 'text-yellow-400' : 'text-red-400';
-		const totalDays = (notBefore && notAfter) ? Math.ceil((notAfter.getTime() - notBefore.getTime()) / 86400000) : null;
+		const validityColor =
+			certDaysLeft === null
+				? 'text-gray-600'
+				: certDaysLeft > 30
+					? 'text-emerald-400'
+					: certDaysLeft > 0
+						? 'text-yellow-400'
+						: 'text-red-400';
+		const totalDays = notBefore && notAfter ? Math.ceil((notAfter.getTime() - notBefore.getTime()) / 86400000) : null;
 
 		html += `<div class="border-t border-emerald-500/20">
 			<div class="px-4 py-2 bg-emerald-500/5"><h5 class="text-[10px] font-bold text-emerald-400/70 uppercase tracking-wider">Certificate</h5></div>
@@ -7181,13 +7615,15 @@ function displayFullReconResults(data) {
 				${ssl.certAlgorithm ? `<div class="bg-cyber-card p-3"><span class="text-[10px] text-gray-500 uppercase block">Key Algorithm</span><span class="text-xs font-bold ${ssl.certAlgorithm === 'ECDSA' ? 'text-emerald-400' : 'text-cyan-400'}">${ssl.certAlgorithm}</span></div>` : ''}
 				${totalDays ? `<div class="bg-cyber-card p-3"><span class="text-[10px] text-gray-500 uppercase block">Duration</span><span class="text-xs text-white font-mono">${totalDays} days</span></div>` : ''}
 			</div>`;
-		if (cert.serialNumber) html += `<div class="px-4 py-2 border-t border-emerald-500/10"><span class="text-[10px] text-gray-500 uppercase">Serial Number</span><code class="text-[10px] text-gray-400 font-mono break-all ml-2">${escapeHtml(cert.serialNumber)}</code></div>`;
-		if (cert.domains && cert.domains.length > 0) html += `<div class="px-4 py-2 border-t border-emerald-500/10"><span class="text-[10px] text-gray-500 uppercase block mb-1">SAN DNS Names (${cert.domains.length})</span><div class="flex flex-wrap gap-1">${cert.domains.map(d => `<code class="text-[10px] font-mono text-emerald-400/70 px-1.5 py-0.5 bg-emerald-500/10 rounded">${escapeHtml(d)}</code>`).join('')}</div></div>`;
+		if (cert.serialNumber)
+			html += `<div class="px-4 py-2 border-t border-emerald-500/10"><span class="text-[10px] text-gray-500 uppercase">Serial Number</span><code class="text-[10px] text-gray-400 font-mono break-all ml-2">${escapeHtml(cert.serialNumber)}</code></div>`;
+		if (cert.domains && cert.domains.length > 0)
+			html += `<div class="px-4 py-2 border-t border-emerald-500/10"><span class="text-[10px] text-gray-500 uppercase block mb-1">SAN DNS Names (${cert.domains.length})</span><div class="flex flex-wrap gap-1">${cert.domains.map((d) => `<code class="text-[10px] font-mono text-emerald-400/70 px-1.5 py-0.5 bg-emerald-500/10 rounded">${escapeHtml(d)}</code>`).join('')}</div></div>`;
 		html += `</div>`;
 	}
 
 	if (ssl.mixedContent && ssl.mixedContent.length > 0) {
-		html += `<div class="border-t border-red-500/20"><div class="px-4 py-2 bg-red-500/5"><h5 class="text-[10px] font-bold text-red-400/70 uppercase tracking-wider">Mixed Content (${ssl.mixedContent.length})</h5></div><div class="px-4 py-2 space-y-1">${ssl.mixedContent.map(url => `<code class="block text-[10px] font-mono text-red-400/80 break-all">${escapeHtml(url)}</code>`).join('')}</div></div>`;
+		html += `<div class="border-t border-red-500/20"><div class="px-4 py-2 bg-red-500/5"><h5 class="text-[10px] font-bold text-red-400/70 uppercase tracking-wider">Mixed Content (${ssl.mixedContent.length})</h5></div><div class="px-4 py-2 space-y-1">${ssl.mixedContent.map((url) => `<code class="block text-[10px] font-mono text-red-400/80 break-all">${escapeHtml(url)}</code>`).join('')}</div></div>`;
 	}
 
 	html += `<div class="border-t border-emerald-500/10"><div class="px-4 py-2 flex flex-wrap gap-3">
@@ -7203,8 +7639,8 @@ function displayFullReconResults(data) {
 				${reconTip('IPv4/IPv6 addresses resolved via DNS A/AAAA records.')}
 			</div>
 			<div class="p-3 space-y-1">
-				${(data.dns?.ipAddresses || []).map(ip => `<code class="block text-sm font-mono text-white">${escapeHtml(ip)}</code>`).join('') || '<span class="text-xs text-gray-500">None</span>'}
-				${(data.dns?.ipv6Addresses || []).length > 0 ? data.dns.ipv6Addresses.map(ip => `<code class="block text-[10px] font-mono text-gray-400 break-all">${escapeHtml(ip)}</code>`).join('') : ''}
+				${(data.dns?.ipAddresses || []).map((ip) => `<code class="block text-sm font-mono text-white">${escapeHtml(ip)}</code>`).join('') || '<span class="text-xs text-gray-500">None</span>'}
+				${(data.dns?.ipv6Addresses || []).length > 0 ? data.dns.ipv6Addresses.map((ip) => `<code class="block text-[10px] font-mono text-gray-400 break-all">${escapeHtml(ip)}</code>`).join('') : ''}
 			</div>
 		</div>
 		<div class="bg-cyber-card border border-cyber-accent/20 rounded-xl overflow-hidden">
@@ -7213,7 +7649,7 @@ function displayFullReconResults(data) {
 				${reconTip('DNS nameservers (NS records) responsible for the domain.')}
 			</div>
 			<div class="p-3 space-y-1">
-				${(data.dns?.nameservers || []).map(ns => `<code class="block text-sm font-mono text-white">${escapeHtml(ns)}</code>`).join('') || '<span class="text-xs text-gray-500">None</span>'}
+				${(data.dns?.nameservers || []).map((ns) => `<code class="block text-sm font-mono text-white">${escapeHtml(ns)}</code>`).join('') || '<span class="text-xs text-gray-500">None</span>'}
 			</div>
 		</div>
 	</div>`;
@@ -7282,7 +7718,9 @@ function displayFullReconResults(data) {
 			</div>
 			<div class="p-3 space-y-3">`;
 		if (cms.cmsName) {
-			const logo = cmsLogos[cms.cmsName] || `<div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400 font-bold text-sm">${escapeHtml(cms.cmsName.charAt(0))}</div>`;
+			const logo =
+				cmsLogos[cms.cmsName] ||
+				`<div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400 font-bold text-sm">${escapeHtml(cms.cmsName.charAt(0))}</div>`;
 			html += `<div class="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 rounded-xl">
 				<div class="flex-shrink-0">${logo}</div>
 				<div><div class="text-lg font-bold text-white">${escapeHtml(cms.cmsName)}</div></div>
@@ -7372,12 +7810,17 @@ function displayFullReconResults(data) {
 			html += `<div class="flex items-center justify-between px-4 py-2">
 				<code class="text-xs font-mono text-white">${escapeHtml(cookie.name)}</code>
 				<div class="flex gap-1">
-					${cookie.flags.map(f => {
-						const color = f === 'Secure' ? 'text-cyber-success bg-cyber-success/10 border-cyber-success/30' :
-							f === 'HttpOnly' ? 'text-blue-400 bg-blue-500/10 border-blue-500/30' :
-							'text-gray-400 bg-gray-500/10 border-gray-500/30';
-						return `<span class="text-[9px] px-1.5 py-0.5 rounded border ${color} font-bold">${escapeHtml(f)}</span>`;
-					}).join('')}
+					${cookie.flags
+						.map((f) => {
+							const color =
+								f === 'Secure'
+									? 'text-cyber-success bg-cyber-success/10 border-cyber-success/30'
+									: f === 'HttpOnly'
+										? 'text-blue-400 bg-blue-500/10 border-blue-500/30'
+										: 'text-gray-400 bg-gray-500/10 border-gray-500/30';
+							return `<span class="text-[9px] px-1.5 py-0.5 rounded border ${color} font-bold">${escapeHtml(f)}</span>`;
+						})
+						.join('')}
 					${!hasSecure ? '<span class="text-[9px] px-1.5 py-0.5 rounded border text-cyber-danger bg-cyber-danger/10 border-cyber-danger/30 font-bold">No Secure</span>' : ''}
 					${!hasHttpOnly ? '<span class="text-[9px] px-1.5 py-0.5 rounded border text-orange-400 bg-orange-500/10 border-orange-500/30 font-bold">No HttpOnly</span>' : ''}
 				</div>
@@ -7417,7 +7860,7 @@ function displayFullReconResults(data) {
 				${reconTip('Mail Exchange records define which servers handle email for the domain. Priority (P) indicates preference — lower = higher priority.')}
 			</div>
 			<div class="p-3 space-y-1">
-				${data.mailServers.map(mx => `<div class="flex items-center gap-3"><span class="text-[10px] text-gray-500 font-mono w-8">P:${mx.priority}</span><code class="text-sm font-mono text-white">${escapeHtml(mx.server)}</code></div>`).join('')}
+				${data.mailServers.map((mx) => `<div class="flex items-center gap-3"><span class="text-[10px] text-gray-500 font-mono w-8">P:${mx.priority}</span><code class="text-sm font-mono text-white">${escapeHtml(mx.server)}</code></div>`).join('')}
 			</div>
 		</div>`;
 	}
@@ -7515,7 +7958,7 @@ function displayFullReconResults(data) {
 				${reconTip('DNS TXT records contain verification tokens, SPF policies, DKIM keys, and other metadata published for the domain.')}
 			</summary>
 			<div class="p-3 space-y-1 max-h-48 overflow-y-auto">
-				${data.txtRecords.map(txt => `<code class="block text-[10px] font-mono text-gray-400 break-all py-1 border-b border-cyber-accent/5">${escapeHtml(txt)}</code>`).join('')}
+				${data.txtRecords.map((txt) => `<code class="block text-[10px] font-mono text-gray-400 break-all py-1 border-b border-cyber-accent/5">${escapeHtml(txt)}</code>`).join('')}
 			</div>
 		</details>`;
 	}
@@ -7536,9 +7979,12 @@ function displayFullReconResults(data) {
 			</div>
 			<div class="max-h-80 overflow-y-auto divide-y divide-cyber-accent/10">`;
 		for (const sub of data.subdomains) {
-			const srcColor = sub.source === 'DNS + CT' ? 'text-purple-400 bg-purple-500/10 border-purple-500/30' :
-				sub.source === 'DNS' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
-				'text-blue-400 bg-blue-500/10 border-blue-500/30';
+			const srcColor =
+				sub.source === 'DNS + CT'
+					? 'text-purple-400 bg-purple-500/10 border-purple-500/30'
+					: sub.source === 'DNS'
+						? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+						: 'text-blue-400 bg-blue-500/10 border-blue-500/30';
 			html += `<div class="flex items-center justify-between px-4 py-1.5 hover:bg-cyber-elevated/30 transition-colors">
 				<div class="flex items-center gap-2 min-w-0">
 					<span class="w-1.5 h-1.5 rounded-full ${sub.ip ? 'bg-emerald-400' : 'bg-gray-600'} flex-shrink-0"></span>
@@ -7557,7 +8003,7 @@ function displayFullReconResults(data) {
 	if (data.reverseIpDomains && data.reverseIpDomains.length > 0) {
 		const domains = data.reverseIpDomains;
 		const targetHost = data.hostname?.toLowerCase() || '';
-		const otherDomains = domains.filter(d => d !== targetHost);
+		const otherDomains = domains.filter((d) => d !== targetHost);
 		html += `<div class="bg-cyber-card border border-amber-500/20 rounded-xl overflow-hidden mb-4">
 			<div class="px-4 py-2.5 border-b border-amber-500/20 bg-amber-500/5 flex items-center justify-between">
 				<div class="flex items-center">
