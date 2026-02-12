@@ -2105,8 +2105,8 @@ function displayHTTPManipulationResults(data) {
 
 			// Determine if bypass occurred based on status code
 			// For HTTP manipulation: 200 = potential bypass, 403 = blocked, others = error/redirect
-			let resultText = 'Blocked';
-			let resultBg = 'bg-cyber-success/20 text-cyber-success';
+			let resultText;
+			let resultBg;
 
 			if (!isError && !isNaN(codeNum)) {
 				if (codeNum >= 200 && codeNum < 300) {
@@ -5670,7 +5670,6 @@ function displaySecurityHeadersResults(data) {
 		medium: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
 		low: 'text-gray-400 bg-gray-500/10 border-gray-500/30',
 	};
-	const severityIcons = { critical: '🔴', high: '🟠', medium: '🟡', low: '⚪' };
 
 	let html = `<div class="p-4">
 		<!-- Header -->
