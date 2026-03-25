@@ -1,5 +1,5 @@
 import { PAYLOADS, ENHANCED_PAYLOADS, PayloadCategory } from './payloads';
-import { quickValidateURL, RateLimiter, addSecurityHeaders } from './security';
+import { quickValidateURL, RateLimiter, addSecurityHeaders, sanitizeCustomHeaders } from './security';
 import { WAFDetector, WAFDetectionResult } from './waf-detection';
 import { PayloadEncoder, ProtocolManipulation } from './encoding';
 import {
@@ -683,6 +683,17 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 			}
 			if (body && body.customPayloads && typeof body.customPayloads === 'object') {
 				customPayloads = body.customPayloads;
+				// Cap custom payloads to prevent memory exhaustion
+				const MAX_CUSTOM_PAYLOADS = 500;
+				let totalCustom = 0;
+				for (const cat of Object.values(customPayloads)) {
+					totalCustom += (cat.payloads?.length || 0);
+				}
+				if (totalCustom > MAX_CUSTOM_PAYLOADS) {
+					return new Response(`data: ${JSON.stringify({ type: 'error', message: `Too many custom payloads (${totalCustom}). Maximum: ${MAX_CUSTOM_PAYLOADS}` })}\n\n`, {
+						headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' },
+					});
+				}
 			}
 		} catch (e) {
 			console.error('Error parsing request body:', e);
@@ -818,7 +829,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 
 							for (const currentPayload of payloadVariations) {
 								for (const method of methods) {
-									let headersObj = customHeaders ? processCustomHeaders(customHeaders, currentPayload) : undefined;
+									let headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, currentPayload) : undefined;
 									let finalPayload = currentPayload;
 									if (enableHTTPManipulation) {
 										const pollutedPayloads = generateHTTPManipulationPayloads(currentPayload, 'pollution');
@@ -836,7 +847,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 								payload = randomUppercase(payload);
 							}
 							const fileUrl = baseUrl.replace(/\/$/, '') + '/' + payload.replace(/^\//, '');
-							const headersObj = customHeaders ? processCustomHeaders(customHeaders, payload) : undefined;
+							const headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, payload) : undefined;
 							testRequests.push({ category, payload: fileUrl, method: 'GET', headersObj, checkType });
 						}
 					} else if (checkType === 'Header') {
@@ -854,7 +865,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 								}
 							}
 							if (customHeaders) {
-								const customHeadersObj = processCustomHeaders(customHeaders, payload);
+								const customHeadersObj = sanitizeCustomHeaders(customHeaders, payload);
 								Object.assign(headersObj, customHeadersObj);
 							}
 							for (const method of methods) {
@@ -862,6 +873,13 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 							}
 						}
 					}
+				}
+
+				// Cap test requests to prevent memory exhaustion
+				const MAX_TEST_REQUESTS = 10_000;
+				if (testRequests.length > MAX_TEST_REQUESTS) {
+					sendEvent('warning', { message: `Capped at ${MAX_TEST_REQUESTS} test requests (was ${testRequests.length})` });
+					testRequests.length = MAX_TEST_REQUESTS;
 				}
 
 				// Send total count
@@ -1094,7 +1112,7 @@ async function handleApiCheckFiltered(
 						if (offset >= end) return results;
 						if (offset >= start) {
 							// Process custom headers if provided
-							let headersObj = customHeaders ? processCustomHeaders(customHeaders, currentPayload) : undefined;
+							let headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, currentPayload) : undefined;
 
 							// Apply HTTP manipulation if enabled
 							let finalPayload = currentPayload;
@@ -1146,7 +1164,7 @@ async function handleApiCheckFiltered(
 					// Use potentially modified baseUrl for the base, and modified payload for the file path
 					const fileUrl = baseUrl.replace(/\/$/, '') + '/' + payload.replace(/^\//, '');
 					// Process custom headers if provided
-					const headersObj = customHeaders ? processCustomHeaders(customHeaders, payload) : undefined;
+					const headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, payload) : undefined;
 					const res = await sendRequest(
 						fileUrl,
 						'GET',
@@ -1190,7 +1208,7 @@ async function handleApiCheckFiltered(
 
 				// Add custom headers if provided
 				if (customHeaders) {
-					const customHeadersObj = processCustomHeaders(customHeaders, payload);
+					const customHeadersObj = sanitizeCustomHeaders(customHeaders, payload);
 					// Merge headers (custom headers override payload headers if same name)
 					Object.assign(headersObj, customHeadersObj);
 				}
@@ -1391,24 +1409,7 @@ async function handleWAFDetection(request: Request): Promise<Response> {
 }
 
 // Helper function to parse and process custom headers
-function processCustomHeaders(customHeadersStr: string, payload?: string): Record<string, string> {
-	const headersObj: Record<string, string> = {};
-	if (!customHeadersStr || !customHeadersStr.trim()) return headersObj;
-
-	for (const line of customHeadersStr.split(/\r?\n/)) {
-		const idx = line.indexOf(':');
-		if (idx > 0) {
-			const name = line.slice(0, idx).trim();
-			let value = line.slice(idx + 1).trim();
-			// Replace {PAYLOAD} placeholder with actual payload
-			if (payload && value.includes('{PAYLOAD}')) {
-				value = value.replace(/\{PAYLOAD\}/g, payload);
-			}
-			headersObj[name] = value;
-		}
-	}
-	return headersObj;
-}
+// sanitizeCustomHeaders is now imported from ./security
 
 // Helper function to substitute payload in JSON template
 function substitutePayload(obj: any, payload: string): any {
