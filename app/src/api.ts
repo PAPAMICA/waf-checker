@@ -1,4 +1,5 @@
 import { PAYLOADS, ENHANCED_PAYLOADS, PayloadCategory } from './payloads';
+import { quickValidateURL } from './security';
 import { WAFDetector, WAFDetectionResult } from './waf-detection';
 import { PayloadEncoder, ProtocolManipulation } from './encoding';
 import {
@@ -263,8 +264,9 @@ export default {
 		if (urlObj.pathname === '/api/check') {
 			const url = urlObj.searchParams.get('url');
 			if (!url) return new Response('Missing url param', { status: 400 });
-			if (url.includes('secmy')) {
-				return new Response(JSON.stringify([]), { headers: { 'content-type': 'application/json; charset=UTF-8' } });
+			const checkSsrf = quickValidateURL(url);
+			if (!checkSsrf.valid) {
+				return apiJsonResponse({ error: 'Invalid target URL', reason: checkSsrf.reason }, 400);
 			}
 			const page = parseInt(urlObj.searchParams.get('page') || '0', 10);
 			const methods = (urlObj.searchParams.get('methods') || 'GET')
@@ -668,8 +670,9 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 	const urlParam = urlObj.searchParams.get('url');
 	if (!urlParam) return new Response('Missing url param', { status: 400 });
 	let url: string = urlParam;
-	if (url.includes('secmy')) {
-		return new Response('data: {"type":"complete","results":[]}\n\n', {
+	const ssrfCheck = quickValidateURL(url);
+	if (!ssrfCheck.valid) {
+		return new Response(`data: ${JSON.stringify({ type: 'error', message: ssrfCheck.reason })}\n\n`, {
 			headers: {
 				'content-type': 'text/event-stream',
 				'cache-control': 'no-cache',
@@ -1261,6 +1264,11 @@ async function handleHTTPManipulation(request: Request): Promise<Response> {
 		});
 	}
 
+	const manipSsrf = quickValidateURL(targetUrl);
+	if (!manipSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: manipSsrf.reason }, 400);
+	}
+
 	try {
 		const testPayload = 'test_payload';
 		const manipulationOptions: HTTPManipulationOptions = {
@@ -1366,6 +1374,11 @@ async function handleWAFDetection(request: Request): Promise<Response> {
 			status: 400,
 			headers: { 'content-type': 'application/json; charset=UTF-8' },
 		});
+	}
+
+	const wafSsrf = quickValidateURL(targetUrl);
+	if (!wafSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: wafSsrf.reason }, 400);
 	}
 
 	try {
@@ -1930,14 +1943,16 @@ async function handleSecurityHeaders(request: Request): Promise<Response> {
 		});
 	}
 
+	const headersSsrf = quickValidateURL(targetUrl);
+	if (!headersSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: headersSsrf.reason }, 400);
+	}
+
 	try {
 		// Validate URL
 		let parsedUrl: URL;
 		try {
 			parsedUrl = new URL(targetUrl);
-			if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-				throw new Error('Invalid protocol');
-			}
 		} catch {
 			return new Response(JSON.stringify({ error: 'Invalid URL format' }), {
 				status: 400,
@@ -2158,6 +2173,11 @@ async function handleDNSRecon(request: Request): Promise<Response> {
 			status: 400,
 			headers: { 'content-type': 'application/json; charset=UTF-8' },
 		});
+	}
+
+	const dnsSsrf = quickValidateURL(targetUrl);
+	if (!dnsSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: dnsSsrf.reason }, 400);
 	}
 
 	let hostname: string;
@@ -3146,10 +3166,14 @@ async function handleFullRecon(request: Request): Promise<Response> {
 		});
 	}
 
+	const reconSsrf = quickValidateURL(targetUrl);
+	if (!reconSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: reconSsrf.reason }, 400);
+	}
+
 	let parsedTarget: URL;
 	try {
 		parsedTarget = new URL(targetUrl);
-		if (parsedTarget.protocol !== 'http:' && parsedTarget.protocol !== 'https:') throw new Error('Invalid protocol');
 	} catch {
 		return new Response(JSON.stringify({ error: 'Invalid URL' }), {
 			status: 400, headers: { 'content-type': 'application/json; charset=UTF-8' },
@@ -3905,10 +3929,14 @@ async function handleSpeedTest(request: Request): Promise<Response> {
 		});
 	}
 
+	const speedSsrf = quickValidateURL(targetUrl);
+	if (!speedSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: speedSsrf.reason }, 400);
+	}
+
 	let parsedTarget: URL;
 	try {
 		parsedTarget = new URL(targetUrl);
-		if (parsedTarget.protocol !== 'http:' && parsedTarget.protocol !== 'https:') throw new Error('Invalid protocol');
 	} catch {
 		return new Response(JSON.stringify({ error: 'Invalid URL' }), {
 			status: 400, headers: { 'content-type': 'application/json; charset=UTF-8' },
@@ -4415,10 +4443,14 @@ async function handleSEOAudit(request: Request): Promise<Response> {
 		});
 	}
 
+	const seoSsrf = quickValidateURL(targetUrl);
+	if (!seoSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: seoSsrf.reason }, 400);
+	}
+
 	let parsedTarget: URL;
 	try {
 		parsedTarget = new URL(targetUrl);
-		if (parsedTarget.protocol !== 'http:' && parsedTarget.protocol !== 'https:') throw new Error('Invalid protocol');
 	} catch {
 		return new Response(JSON.stringify({ error: 'Invalid URL' }), {
 			status: 400, headers: { 'content-type': 'application/json; charset=UTF-8' },
