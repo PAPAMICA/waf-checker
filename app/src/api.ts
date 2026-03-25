@@ -1446,10 +1446,14 @@ function randomUppercase(str: string): string {
 }
 
 // Global batch state storage (in production, use a database or KV store)
+const MAX_BATCH_JOBS = 50;
+const MAX_BATCH_JOBS_PER_IP = 3;
+
 const batchJobs = new Map<
 	string,
 	{
 		id: string;
+		ownerIP: string;
 		status: 'running' | 'completed' | 'stopped' | 'error';
 		progress: number;
 		currentUrl: string;
@@ -1463,7 +1467,7 @@ const batchJobs = new Map<
 
 // Cleanup old batch jobs periodically to prevent memory leaks
 function cleanupOldBatchJobs() {
-	const cutoffTime = Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
+	const cutoffTime = Date.now() - 1 * 60 * 60 * 1000; // 1 hour (reduced from 24h)
 
 	for (const [jobId, job] of batchJobs.entries()) {
 		const jobStartTime = new Date(job.startTime).getTime();
@@ -1506,16 +1510,11 @@ async function handleBatchStart(request: Request): Promise<Response> {
 		const invalidUrls: string[] = [];
 
 		for (const url of urls) {
-			try {
-				const urlObj = new URL(url);
-				// Check if protocol is HTTP or HTTPS
-				if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
-					invalidUrls.push(`${url} (unsupported protocol: ${urlObj.protocol})`);
-				} else {
-					validUrls.push(url);
-				}
-			} catch {
-				invalidUrls.push(`${url} (invalid URL format)`);
+			const urlValidation = quickValidateURL(url);
+			if (!urlValidation.valid) {
+				invalidUrls.push(`${url} (${urlValidation.reason})`);
+			} else {
+				validUrls.push(url);
 			}
 		}
 
@@ -1540,12 +1539,29 @@ async function handleBatchStart(request: Request): Promise<Response> {
 			});
 		}
 
-		const jobId = `batch_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+		// Enforce batch job limits
+		const clientIP = getClientIP(request);
+		if (batchJobs.size >= MAX_BATCH_JOBS) {
+			return new Response(JSON.stringify({ error: 'Too many batch jobs globally. Try again later.' }), {
+				status: 429,
+				headers: { 'content-type': 'application/json' },
+			});
+		}
+		const ipJobCount = Array.from(batchJobs.values()).filter(j => j.ownerIP === clientIP && j.status === 'running').length;
+		if (ipJobCount >= MAX_BATCH_JOBS_PER_IP) {
+			return new Response(JSON.stringify({ error: `Maximum ${MAX_BATCH_JOBS_PER_IP} concurrent batch jobs per IP.` }), {
+				status: 429,
+				headers: { 'content-type': 'application/json' },
+			});
+		}
+
+		const jobId = crypto.randomUUID();
 		const startTime = new Date().toISOString();
 
 		// Initialize batch job
 		batchJobs.set(jobId, {
 			id: jobId,
+			ownerIP: clientIP,
 			status: 'running',
 			progress: 0,
 			currentUrl: '',
@@ -1597,22 +1613,24 @@ async function handleBatchStatus(request: Request): Promise<Response> {
 
 	const job = batchJobs.get(jobId);
 	if (!job) {
-		console.log(`Job ${jobId} not found. Available jobs:`, Array.from(batchJobs.keys()));
 		return new Response(JSON.stringify({ error: 'Job not found' }), {
 			status: 404,
 			headers: { 'content-type': 'application/json' },
 		});
 	}
 
-	console.log(`Status request for job ${jobId}:`, {
-		progress: job.progress,
-		completedUrls: job.completedUrls,
-		totalUrls: job.totalUrls,
-		currentUrl: job.currentUrl,
-		status: job.status,
-	});
+	// Verify job ownership
+	const statusIP = getClientIP(request);
+	if (job.ownerIP !== statusIP) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 403,
+			headers: { 'content-type': 'application/json' },
+		});
+	}
 
-	return new Response(JSON.stringify(job), {
+	// Return job data without exposing ownerIP
+	const { ownerIP, ...safeJob } = job;
+	return new Response(JSON.stringify(safeJob), {
 		headers: { 'content-type': 'application/json' },
 	});
 }
@@ -1632,6 +1650,15 @@ async function handleBatchStop(request: Request): Promise<Response> {
 	if (!job) {
 		return new Response(JSON.stringify({ error: 'Job not found' }), {
 			status: 404,
+			headers: { 'content-type': 'application/json' },
+		});
+	}
+
+	// Verify job ownership
+	const stopIP = getClientIP(request);
+	if (job.ownerIP !== stopIP) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 403,
 			headers: { 'content-type': 'application/json' },
 		});
 	}

@@ -3,6 +3,8 @@
  * Supports JSON, CSV, and PDF export formats with vulnerability scoring
  */
 
+import { escapeHtml } from './security';
+
 export interface TestResult {
   category: string;
   method: string;
@@ -350,7 +352,7 @@ export function generateHTMLReport(session: TestSession): string {
 <body>
     <div class="header">
         <h1>WAF ${falsePositiveMode ? 'False Positive' : 'Security'} Assessment Report</h1>
-        <p><strong>Target URL:</strong> ${session.url}</p>
+        <p><strong>Target URL:</strong> ${escapeHtml(session.url)}</p>
         <p><strong>Test Date:</strong> ${new Date(session.startTime).toLocaleString()}</p>
         <p><strong>Duration:</strong> ${Math.round((new Date(session.endTime).getTime() - new Date(session.startTime).getTime()) / 1000)}s</p>
     </div>
@@ -393,12 +395,12 @@ export function generateHTMLReport(session: TestSession): string {
     ${session.wafDetection?.detected ? `
     <div class="summary-card">
         <h3>WAF Detection Results</h3>
-        <p><strong>Detected WAF:</strong> ${session.wafDetection.wafType}</p>
+        <p><strong>Detected WAF:</strong> ${escapeHtml(session.wafDetection.wafType || '')}</p>
         <p><strong>Confidence:</strong> ${session.wafDetection.confidence}%</p>
         ${session.wafDetection.evidence ? `
         <p><strong>Evidence:</strong></p>
         <ul>
-            ${session.wafDetection.evidence.map(e => `<li><code>${e}</code></li>`).join('')}
+            ${session.wafDetection.evidence.map(e => `<li><code>${escapeHtml(e)}</code></li>`).join('')}
         </ul>
         ` : ''}
     </div>
@@ -443,7 +445,7 @@ export function generateHTMLReport(session: TestSession): string {
             <tbody>
                 ${vulnerabilityScores.map(vuln => `
                 <tr>
-                    <td>${vuln.category}</td>
+                    <td>${escapeHtml(vuln.category)}</td>
                     <td class="severity-${vuln.severity.toLowerCase()}">${vuln.severity}</td>
                     <td>${vuln.score}/100</td>
                     <td>${vuln.bypassRate}%</td>
@@ -457,7 +459,7 @@ export function generateHTMLReport(session: TestSession): string {
     <div class="recommendations">
         <h3>Recommendations</h3>
         <ol>
-            ${executiveSummary.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+            ${executiveSummary.recommendations.map(rec => `<li>${escapeHtml(rec)}</li>`).join('')}
         </ol>
     </div>
 
@@ -492,7 +494,7 @@ export function generateHTMLReport(session: TestSession): string {
                     <td>${result.method}</td>
                     <td>${result.status}</td>
                     <td>${result.responseTime}ms</td>
-                    <td><code>${result.payload.length > 100 ? result.payload.substring(0, 100) + '...' : result.payload}</code></td>
+                    <td><code>${escapeHtml(result.payload.length > 100 ? result.payload.substring(0, 100) + '...' : result.payload)}</code></td>
                 </tr>
                 `;
             }).join('')}
