@@ -1,7 +1,7 @@
 name = "waf-checker-deploy-2026"
 main = "src/api.ts"
 compatibility_date = "2025-02-05"
-account_id = "24c9335e645b85d12b204655e4d2c7bd"
+# account_id: set via CLOUDFLARE_ACCOUNT_ID env var or wrangler --account-id flag
 [assets]
 directory = "./src/static"
 binding = "ASSETS"
