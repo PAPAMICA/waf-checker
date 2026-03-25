@@ -1,4 +1,5 @@
 import { PAYLOADS, ENHANCED_PAYLOADS, PayloadCategory } from './payloads';
+import { quickValidateURL, RateLimiter, addSecurityHeaders, sanitizeCustomHeaders } from './security';
 import { WAFDetector, WAFDetectionResult } from './waf-detection';
 import { PayloadEncoder, ProtocolManipulation } from './encoding';
 import {
@@ -10,38 +11,9 @@ import {
 import { HTTPManipulator, ManipulatedRequest, HTTPManipulationOptions } from './http-manipulation';
 
 // =============================================
-// RATE LIMITER (in-memory, per-IP)
+// RATE LIMITER (in-memory, per-IP, per-endpoint)
 // =============================================
-interface RateLimitEntry {
-	count: number;
-	resetAt: number;
-}
-
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 1;         // 1 request per minute per IP
-const rateLimitMap = new Map<string, RateLimitEntry>();
-
-function getRateLimitInfo(ip: string): { allowed: boolean; remaining: number; resetAt: number } {
-	const now = Date.now();
-	let entry = rateLimitMap.get(ip);
-
-	// Clean up expired entries periodically (every 100 checks)
-	if (Math.random() < 0.01) {
-		for (const [key, val] of rateLimitMap) {
-			if (now > val.resetAt) rateLimitMap.delete(key);
-		}
-	}
-
-	if (!entry || now > entry.resetAt) {
-		entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW };
-		rateLimitMap.set(ip, entry);
-	}
-
-	entry.count++;
-	const allowed = entry.count <= RATE_LIMIT_MAX;
-	const remaining = Math.max(0, RATE_LIMIT_MAX - entry.count);
-	return { allowed, remaining, resetAt: entry.resetAt };
-}
+const rateLimiter = new RateLimiter();
 
 function getClientIP(request: Request): string {
 	return request.headers.get('cf-connecting-ip')
@@ -61,9 +33,9 @@ function apiJsonResponse(data: any, status: number = 200, rateHeaders?: Record<s
 	return new Response(JSON.stringify(data, null, 2), { status, headers });
 }
 
-function rateLimitHeaders(remaining: number, resetAt: number): Record<string, string> {
+function rateLimitHeaders(remaining: number, resetAt: number, limit: number = 1): Record<string, string> {
 	return {
-		'x-ratelimit-limit': String(RATE_LIMIT_MAX),
+		'x-ratelimit-limit': String(limit),
 		'x-ratelimit-remaining': String(remaining),
 		'x-ratelimit-reset': String(Math.ceil(resetAt / 1000)),
 	};
@@ -213,6 +185,19 @@ export default {
 			loadPayloadsFromGitHub();
 		}
 
+		// Global rate limiting for all API endpoints
+		if (urlObj.pathname.startsWith('/api/')) {
+			const clientIP = getClientIP(request);
+			const rl = rateLimiter.check(clientIP, urlObj.pathname);
+			if (!rl.allowed) {
+				return apiJsonResponse(
+					{ error: 'Rate limit exceeded', retryAfter: Math.ceil((rl.resetAt - Date.now()) / 1000) },
+					429,
+					rateLimitHeaders(rl.remaining, rl.resetAt, rl.limit),
+				);
+			}
+		}
+
 		// Load index.html from assets if not already loaded
 		if (urlObj.pathname === '/' && !INDEX_HTML && env?.ASSETS) {
 			try {
@@ -237,7 +222,7 @@ export default {
 					console.error('Error loading index.html from assets:', e);
 				}
 			}
-			return new Response(INDEX_HTML || 'WAF Checker - Loading...', { headers: { 'content-type': 'text/html; charset=UTF-8' } });
+			return addSecurityHeaders(new Response(INDEX_HTML || 'WAF Checker - Loading...', { headers: { 'content-type': 'text/html; charset=UTF-8' } }));
 		}
 		if (urlObj.pathname === '/api/payloads/status') {
 			const totalCategories = Object.keys(PAYLOADS).length;
@@ -263,8 +248,9 @@ export default {
 		if (urlObj.pathname === '/api/check') {
 			const url = urlObj.searchParams.get('url');
 			if (!url) return new Response('Missing url param', { status: 400 });
-			if (url.includes('secmy')) {
-				return new Response(JSON.stringify([]), { headers: { 'content-type': 'application/json; charset=UTF-8' } });
+			const checkSsrf = quickValidateURL(url);
+			if (!checkSsrf.valid) {
+				return apiJsonResponse({ error: 'Invalid target URL', reason: checkSsrf.reason }, 400);
 			}
 			const page = parseInt(urlObj.searchParams.get('page') || '0', 10);
 			const methods = (urlObj.searchParams.get('methods') || 'GET')
@@ -383,17 +369,8 @@ export default {
 				return apiJsonResponse(null, 204);
 			}
 
-			const ip = getClientIP(request);
-			const rl = getRateLimitInfo(ip);
-			const rlHeaders = rateLimitHeaders(rl.remaining, rl.resetAt);
-
-			if (!rl.allowed) {
-				return apiJsonResponse(
-					{ error: 'Rate limit exceeded', message: `Maximum ${RATE_LIMIT_MAX} request${RATE_LIMIT_MAX > 1 ? 's' : ''} per minute. Try again later.`, retryAfter: Math.ceil((rl.resetAt - Date.now()) / 1000) },
-					429,
-					{ ...rlHeaders, 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) },
-				);
-			}
+			// Rate limiting is now handled globally above.
+			// The global rate limiter already checked /api/v1/ with 1 req/min.
 
 			const apiPath = urlObj.pathname.replace('/api/v1', '');
 
@@ -411,19 +388,19 @@ export default {
 						'GET /api/v1/seo?url=<target>',
 						'GET /api/v1/http-manipulation?url=<target>',
 					],
-					rateLimit: { limit: RATE_LIMIT_MAX, window: '1 minute', remaining: rl.remaining },
-				}, 200, rlHeaders);
+					rateLimit: { limit: 1, window: '1 minute' },
+				});
 			}
 
 			// GET /api/v1/docs — full documentation
 			if (apiPath === '/docs') {
-				return apiJsonResponse(getAPIDocumentation(urlObj.origin), 200, rlHeaders);
+				return apiJsonResponse(getAPIDocumentation(urlObj.origin), 200);
 			}
 
 			// Ensure target URL
 			const target = urlObj.searchParams.get('url');
 			if (!target) {
-				return apiJsonResponse({ error: 'Missing required parameter: url', example: `${urlObj.origin}${urlObj.pathname}?url=https://example.com` }, 400, rlHeaders);
+				return apiJsonResponse({ error: 'Missing required parameter: url', example: `${urlObj.origin}${urlObj.pathname}?url=https://example.com` }, 400);
 			}
 
 			// Normalize target URL
@@ -493,7 +470,7 @@ export default {
 					if (categories) responseData.categories = categories;
 					if (page > 0) responseData.page = page;
 
-					return apiJsonResponse(responseData, 200, rlHeaders);
+					return apiJsonResponse(responseData, 200);
 				}
 
 				// --- Other endpoints: proxy to internal handlers ---
@@ -521,7 +498,7 @@ export default {
 						response = await handleHTTPManipulation(fakeReq);
 						break;
 					default:
-						return apiJsonResponse({ error: 'Unknown endpoint', available: ['/waf-checker', '/recon', '/security-headers', '/speedtest', '/seo', '/http-manipulation'] }, 404, rlHeaders);
+						return apiJsonResponse({ error: 'Unknown endpoint', available: ['/waf-checker', '/recon', '/security-headers', '/speedtest', '/seo', '/http-manipulation'] }, 404);
 				}
 
 				// Re-wrap the response with rate-limit headers and CORS
@@ -529,9 +506,9 @@ export default {
 				let jsonData: any;
 				try { jsonData = JSON.parse(body); } catch { jsonData = { raw: body }; }
 
-				return apiJsonResponse(jsonData, response.status, rlHeaders);
+				return apiJsonResponse(jsonData, response.status);
 			} catch (err: any) {
-				return apiJsonResponse({ error: 'Internal server error', message: err?.message || 'Unknown error' }, 500, rlHeaders);
+				return apiJsonResponse({ error: 'Internal server error', message: err?.message || 'Unknown error' }, 500);
 			}
 		}
 
@@ -559,7 +536,7 @@ function getAPIDocumentation(origin: string) {
 		version: '1.0',
 		baseUrl: `${origin}/api/v1`,
 		rateLimit: {
-			maxRequests: RATE_LIMIT_MAX,
+			maxRequests: 1,
 			window: '1 minute',
 			headers: {
 				'x-ratelimit-limit': 'Maximum requests per window',
@@ -668,8 +645,9 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 	const urlParam = urlObj.searchParams.get('url');
 	if (!urlParam) return new Response('Missing url param', { status: 400 });
 	let url: string = urlParam;
-	if (url.includes('secmy')) {
-		return new Response('data: {"type":"complete","results":[]}\n\n', {
+	const ssrfCheck = quickValidateURL(url);
+	if (!ssrfCheck.valid) {
+		return new Response(`data: ${JSON.stringify({ type: 'error', message: ssrfCheck.reason })}\n\n`, {
 			headers: {
 				'content-type': 'text/event-stream',
 				'cache-control': 'no-cache',
@@ -705,6 +683,17 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 			}
 			if (body && body.customPayloads && typeof body.customPayloads === 'object') {
 				customPayloads = body.customPayloads;
+				// Cap custom payloads to prevent memory exhaustion
+				const MAX_CUSTOM_PAYLOADS = 500;
+				let totalCustom = 0;
+				for (const cat of Object.values(customPayloads!)) {
+					totalCustom += (cat.payloads?.length || 0);
+				}
+				if (totalCustom > MAX_CUSTOM_PAYLOADS) {
+					return new Response(`data: ${JSON.stringify({ type: 'error', message: `Too many custom payloads (${totalCustom}). Maximum: ${MAX_CUSTOM_PAYLOADS}` })}\n\n`, {
+						headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' },
+					});
+				}
 			}
 		} catch (e) {
 			console.error('Error parsing request body:', e);
@@ -840,7 +829,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 
 							for (const currentPayload of payloadVariations) {
 								for (const method of methods) {
-									let headersObj = customHeaders ? processCustomHeaders(customHeaders, currentPayload) : undefined;
+									let headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, currentPayload) : undefined;
 									let finalPayload = currentPayload;
 									if (enableHTTPManipulation) {
 										const pollutedPayloads = generateHTTPManipulationPayloads(currentPayload, 'pollution');
@@ -858,7 +847,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 								payload = randomUppercase(payload);
 							}
 							const fileUrl = baseUrl.replace(/\/$/, '') + '/' + payload.replace(/^\//, '');
-							const headersObj = customHeaders ? processCustomHeaders(customHeaders, payload) : undefined;
+							const headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, payload) : undefined;
 							testRequests.push({ category, payload: fileUrl, method: 'GET', headersObj, checkType });
 						}
 					} else if (checkType === 'Header') {
@@ -876,7 +865,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 								}
 							}
 							if (customHeaders) {
-								const customHeadersObj = processCustomHeaders(customHeaders, payload);
+								const customHeadersObj = sanitizeCustomHeaders(customHeaders, payload);
 								Object.assign(headersObj, customHeadersObj);
 							}
 							for (const method of methods) {
@@ -884,6 +873,13 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 							}
 						}
 					}
+				}
+
+				// Cap test requests to prevent memory exhaustion
+				const MAX_TEST_REQUESTS = 10_000;
+				if (testRequests.length > MAX_TEST_REQUESTS) {
+					sendEvent('warning', { message: `Capped at ${MAX_TEST_REQUESTS} test requests (was ${testRequests.length})` });
+					testRequests.length = MAX_TEST_REQUESTS;
 				}
 
 				// Send total count
@@ -1116,7 +1112,7 @@ async function handleApiCheckFiltered(
 						if (offset >= end) return results;
 						if (offset >= start) {
 							// Process custom headers if provided
-							let headersObj = customHeaders ? processCustomHeaders(customHeaders, currentPayload) : undefined;
+							let headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, currentPayload) : undefined;
 
 							// Apply HTTP manipulation if enabled
 							let finalPayload = currentPayload;
@@ -1168,7 +1164,7 @@ async function handleApiCheckFiltered(
 					// Use potentially modified baseUrl for the base, and modified payload for the file path
 					const fileUrl = baseUrl.replace(/\/$/, '') + '/' + payload.replace(/^\//, '');
 					// Process custom headers if provided
-					const headersObj = customHeaders ? processCustomHeaders(customHeaders, payload) : undefined;
+					const headersObj = customHeaders ? sanitizeCustomHeaders(customHeaders, payload) : undefined;
 					const res = await sendRequest(
 						fileUrl,
 						'GET',
@@ -1212,7 +1208,7 @@ async function handleApiCheckFiltered(
 
 				// Add custom headers if provided
 				if (customHeaders) {
-					const customHeadersObj = processCustomHeaders(customHeaders, payload);
+					const customHeadersObj = sanitizeCustomHeaders(customHeaders, payload);
 					// Merge headers (custom headers override payload headers if same name)
 					Object.assign(headersObj, customHeadersObj);
 				}
@@ -1259,6 +1255,11 @@ async function handleHTTPManipulation(request: Request): Promise<Response> {
 			status: 400,
 			headers: { 'content-type': 'application/json; charset=UTF-8' },
 		});
+	}
+
+	const manipSsrf = quickValidateURL(targetUrl);
+	if (!manipSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: manipSsrf.reason }, 400);
 	}
 
 	try {
@@ -1368,6 +1369,11 @@ async function handleWAFDetection(request: Request): Promise<Response> {
 		});
 	}
 
+	const wafSsrf = quickValidateURL(targetUrl);
+	if (!wafSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: wafSsrf.reason }, 400);
+	}
+
 	try {
 		// Run both detections in parallel with allSettled to prevent one failure from crashing the other
 		const [detectionResult, bypassResult] = await Promise.allSettled([
@@ -1403,24 +1409,7 @@ async function handleWAFDetection(request: Request): Promise<Response> {
 }
 
 // Helper function to parse and process custom headers
-function processCustomHeaders(customHeadersStr: string, payload?: string): Record<string, string> {
-	const headersObj: Record<string, string> = {};
-	if (!customHeadersStr || !customHeadersStr.trim()) return headersObj;
-
-	for (const line of customHeadersStr.split(/\r?\n/)) {
-		const idx = line.indexOf(':');
-		if (idx > 0) {
-			const name = line.slice(0, idx).trim();
-			let value = line.slice(idx + 1).trim();
-			// Replace {PAYLOAD} placeholder with actual payload
-			if (payload && value.includes('{PAYLOAD}')) {
-				value = value.replace(/\{PAYLOAD\}/g, payload);
-			}
-			headersObj[name] = value;
-		}
-	}
-	return headersObj;
-}
+// sanitizeCustomHeaders is now imported from ./security
 
 // Helper function to substitute payload in JSON template
 function substitutePayload(obj: any, payload: string): any {
@@ -1458,10 +1447,14 @@ function randomUppercase(str: string): string {
 }
 
 // Global batch state storage (in production, use a database or KV store)
+const MAX_BATCH_JOBS = 50;
+const MAX_BATCH_JOBS_PER_IP = 3;
+
 const batchJobs = new Map<
 	string,
 	{
 		id: string;
+		ownerIP: string;
 		status: 'running' | 'completed' | 'stopped' | 'error';
 		progress: number;
 		currentUrl: string;
@@ -1475,7 +1468,7 @@ const batchJobs = new Map<
 
 // Cleanup old batch jobs periodically to prevent memory leaks
 function cleanupOldBatchJobs() {
-	const cutoffTime = Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
+	const cutoffTime = Date.now() - 1 * 60 * 60 * 1000; // 1 hour (reduced from 24h)
 
 	for (const [jobId, job] of batchJobs.entries()) {
 		const jobStartTime = new Date(job.startTime).getTime();
@@ -1518,16 +1511,11 @@ async function handleBatchStart(request: Request): Promise<Response> {
 		const invalidUrls: string[] = [];
 
 		for (const url of urls) {
-			try {
-				const urlObj = new URL(url);
-				// Check if protocol is HTTP or HTTPS
-				if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
-					invalidUrls.push(`${url} (unsupported protocol: ${urlObj.protocol})`);
-				} else {
-					validUrls.push(url);
-				}
-			} catch {
-				invalidUrls.push(`${url} (invalid URL format)`);
+			const urlValidation = quickValidateURL(url);
+			if (!urlValidation.valid) {
+				invalidUrls.push(`${url} (${urlValidation.reason})`);
+			} else {
+				validUrls.push(url);
 			}
 		}
 
@@ -1552,12 +1540,29 @@ async function handleBatchStart(request: Request): Promise<Response> {
 			});
 		}
 
-		const jobId = `batch_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+		// Enforce batch job limits
+		const clientIP = getClientIP(request);
+		if (batchJobs.size >= MAX_BATCH_JOBS) {
+			return new Response(JSON.stringify({ error: 'Too many batch jobs globally. Try again later.' }), {
+				status: 429,
+				headers: { 'content-type': 'application/json' },
+			});
+		}
+		const ipJobCount = Array.from(batchJobs.values()).filter(j => j.ownerIP === clientIP && j.status === 'running').length;
+		if (ipJobCount >= MAX_BATCH_JOBS_PER_IP) {
+			return new Response(JSON.stringify({ error: `Maximum ${MAX_BATCH_JOBS_PER_IP} concurrent batch jobs per IP.` }), {
+				status: 429,
+				headers: { 'content-type': 'application/json' },
+			});
+		}
+
+		const jobId = crypto.randomUUID();
 		const startTime = new Date().toISOString();
 
 		// Initialize batch job
 		batchJobs.set(jobId, {
 			id: jobId,
+			ownerIP: clientIP,
 			status: 'running',
 			progress: 0,
 			currentUrl: '',
@@ -1609,22 +1614,24 @@ async function handleBatchStatus(request: Request): Promise<Response> {
 
 	const job = batchJobs.get(jobId);
 	if (!job) {
-		console.log(`Job ${jobId} not found. Available jobs:`, Array.from(batchJobs.keys()));
 		return new Response(JSON.stringify({ error: 'Job not found' }), {
 			status: 404,
 			headers: { 'content-type': 'application/json' },
 		});
 	}
 
-	console.log(`Status request for job ${jobId}:`, {
-		progress: job.progress,
-		completedUrls: job.completedUrls,
-		totalUrls: job.totalUrls,
-		currentUrl: job.currentUrl,
-		status: job.status,
-	});
+	// Verify job ownership
+	const statusIP = getClientIP(request);
+	if (job.ownerIP !== statusIP) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 403,
+			headers: { 'content-type': 'application/json' },
+		});
+	}
 
-	return new Response(JSON.stringify(job), {
+	// Return job data without exposing ownerIP
+	const { ownerIP, ...safeJob } = job;
+	return new Response(JSON.stringify(safeJob), {
 		headers: { 'content-type': 'application/json' },
 	});
 }
@@ -1644,6 +1651,15 @@ async function handleBatchStop(request: Request): Promise<Response> {
 	if (!job) {
 		return new Response(JSON.stringify({ error: 'Job not found' }), {
 			status: 404,
+			headers: { 'content-type': 'application/json' },
+		});
+	}
+
+	// Verify job ownership
+	const stopIP = getClientIP(request);
+	if (job.ownerIP !== stopIP) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 403,
 			headers: { 'content-type': 'application/json' },
 		});
 	}
@@ -1930,14 +1946,16 @@ async function handleSecurityHeaders(request: Request): Promise<Response> {
 		});
 	}
 
+	const headersSsrf = quickValidateURL(targetUrl);
+	if (!headersSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: headersSsrf.reason }, 400);
+	}
+
 	try {
 		// Validate URL
 		let parsedUrl: URL;
 		try {
 			parsedUrl = new URL(targetUrl);
-			if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-				throw new Error('Invalid protocol');
-			}
 		} catch {
 			return new Response(JSON.stringify({ error: 'Invalid URL format' }), {
 				status: 400,
@@ -2158,6 +2176,11 @@ async function handleDNSRecon(request: Request): Promise<Response> {
 			status: 400,
 			headers: { 'content-type': 'application/json; charset=UTF-8' },
 		});
+	}
+
+	const dnsSsrf = quickValidateURL(targetUrl);
+	if (!dnsSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: dnsSsrf.reason }, 400);
 	}
 
 	let hostname: string;
@@ -3146,10 +3169,14 @@ async function handleFullRecon(request: Request): Promise<Response> {
 		});
 	}
 
+	const reconSsrf = quickValidateURL(targetUrl);
+	if (!reconSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: reconSsrf.reason }, 400);
+	}
+
 	let parsedTarget: URL;
 	try {
 		parsedTarget = new URL(targetUrl);
-		if (parsedTarget.protocol !== 'http:' && parsedTarget.protocol !== 'https:') throw new Error('Invalid protocol');
 	} catch {
 		return new Response(JSON.stringify({ error: 'Invalid URL' }), {
 			status: 400, headers: { 'content-type': 'application/json; charset=UTF-8' },
@@ -3905,10 +3932,14 @@ async function handleSpeedTest(request: Request): Promise<Response> {
 		});
 	}
 
+	const speedSsrf = quickValidateURL(targetUrl);
+	if (!speedSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: speedSsrf.reason }, 400);
+	}
+
 	let parsedTarget: URL;
 	try {
 		parsedTarget = new URL(targetUrl);
-		if (parsedTarget.protocol !== 'http:' && parsedTarget.protocol !== 'https:') throw new Error('Invalid protocol');
 	} catch {
 		return new Response(JSON.stringify({ error: 'Invalid URL' }), {
 			status: 400, headers: { 'content-type': 'application/json; charset=UTF-8' },
@@ -4415,10 +4446,14 @@ async function handleSEOAudit(request: Request): Promise<Response> {
 		});
 	}
 
+	const seoSsrf = quickValidateURL(targetUrl);
+	if (!seoSsrf.valid) {
+		return apiJsonResponse({ error: 'Invalid target URL', reason: seoSsrf.reason }, 400);
+	}
+
 	let parsedTarget: URL;
 	try {
 		parsedTarget = new URL(targetUrl);
-		if (parsedTarget.protocol !== 'http:' && parsedTarget.protocol !== 'https:') throw new Error('Invalid protocol');
 	} catch {
 		return new Response(JSON.stringify({ error: 'Invalid URL' }), {
 			status: 400, headers: { 'content-type': 'application/json; charset=UTF-8' },

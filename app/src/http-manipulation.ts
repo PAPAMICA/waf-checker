@@ -318,7 +318,7 @@ export class HTTPManipulator {
 
     // Host Header Injection
     if (options.enableHostHeaderInjection !== false) {
-      const hostVariations = this.generateHostHeaderVariations(parsedUrl.host, 'evil.com');
+      const hostVariations = this.generateHostHeaderVariations(parsedUrl.host, 'waf-test.invalid');
       hostVariations.forEach(headers => {
         requests.push({
           method: 'GET',
