@@ -1,5 +1,5 @@
 import { PAYLOADS, ENHANCED_PAYLOADS, PayloadCategory } from './payloads';
-import { quickValidateURL } from './security';
+import { quickValidateURL, RateLimiter, addSecurityHeaders } from './security';
 import { WAFDetector, WAFDetectionResult } from './waf-detection';
 import { PayloadEncoder, ProtocolManipulation } from './encoding';
 import {
@@ -11,38 +11,9 @@ import {
 import { HTTPManipulator, ManipulatedRequest, HTTPManipulationOptions } from './http-manipulation';
 
 // =============================================
-// RATE LIMITER (in-memory, per-IP)
+// RATE LIMITER (in-memory, per-IP, per-endpoint)
 // =============================================
-interface RateLimitEntry {
-	count: number;
-	resetAt: number;
-}
-
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 1;         // 1 request per minute per IP
-const rateLimitMap = new Map<string, RateLimitEntry>();
-
-function getRateLimitInfo(ip: string): { allowed: boolean; remaining: number; resetAt: number } {
-	const now = Date.now();
-	let entry = rateLimitMap.get(ip);
-
-	// Clean up expired entries periodically (every 100 checks)
-	if (Math.random() < 0.01) {
-		for (const [key, val] of rateLimitMap) {
-			if (now > val.resetAt) rateLimitMap.delete(key);
-		}
-	}
-
-	if (!entry || now > entry.resetAt) {
-		entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW };
-		rateLimitMap.set(ip, entry);
-	}
-
-	entry.count++;
-	const allowed = entry.count <= RATE_LIMIT_MAX;
-	const remaining = Math.max(0, RATE_LIMIT_MAX - entry.count);
-	return { allowed, remaining, resetAt: entry.resetAt };
-}
+const rateLimiter = new RateLimiter();
 
 function getClientIP(request: Request): string {
 	return request.headers.get('cf-connecting-ip')
@@ -62,9 +33,9 @@ function apiJsonResponse(data: any, status: number = 200, rateHeaders?: Record<s
 	return new Response(JSON.stringify(data, null, 2), { status, headers });
 }
 
-function rateLimitHeaders(remaining: number, resetAt: number): Record<string, string> {
+function rateLimitHeaders(remaining: number, resetAt: number, limit: number = 1): Record<string, string> {
 	return {
-		'x-ratelimit-limit': String(RATE_LIMIT_MAX),
+		'x-ratelimit-limit': String(limit),
 		'x-ratelimit-remaining': String(remaining),
 		'x-ratelimit-reset': String(Math.ceil(resetAt / 1000)),
 	};
@@ -214,6 +185,19 @@ export default {
 			loadPayloadsFromGitHub();
 		}
 
+		// Global rate limiting for all API endpoints
+		if (urlObj.pathname.startsWith('/api/')) {
+			const clientIP = getClientIP(request);
+			const rl = rateLimiter.check(clientIP, urlObj.pathname);
+			if (!rl.allowed) {
+				return apiJsonResponse(
+					{ error: 'Rate limit exceeded', retryAfter: Math.ceil((rl.resetAt - Date.now()) / 1000) },
+					429,
+					rateLimitHeaders(rl.remaining, rl.resetAt, rl.limit),
+				);
+			}
+		}
+
 		// Load index.html from assets if not already loaded
 		if (urlObj.pathname === '/' && !INDEX_HTML && env?.ASSETS) {
 			try {
@@ -238,7 +222,7 @@ export default {
 					console.error('Error loading index.html from assets:', e);
 				}
 			}
-			return new Response(INDEX_HTML || 'WAF Checker - Loading...', { headers: { 'content-type': 'text/html; charset=UTF-8' } });
+			return addSecurityHeaders(new Response(INDEX_HTML || 'WAF Checker - Loading...', { headers: { 'content-type': 'text/html; charset=UTF-8' } }));
 		}
 		if (urlObj.pathname === '/api/payloads/status') {
 			const totalCategories = Object.keys(PAYLOADS).length;
@@ -385,17 +369,8 @@ export default {
 				return apiJsonResponse(null, 204);
 			}
 
-			const ip = getClientIP(request);
-			const rl = getRateLimitInfo(ip);
-			const rlHeaders = rateLimitHeaders(rl.remaining, rl.resetAt);
-
-			if (!rl.allowed) {
-				return apiJsonResponse(
-					{ error: 'Rate limit exceeded', message: `Maximum ${RATE_LIMIT_MAX} request${RATE_LIMIT_MAX > 1 ? 's' : ''} per minute. Try again later.`, retryAfter: Math.ceil((rl.resetAt - Date.now()) / 1000) },
-					429,
-					{ ...rlHeaders, 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) },
-				);
-			}
+			// Rate limiting is now handled globally above.
+			// The global rate limiter already checked /api/v1/ with 1 req/min.
 
 			const apiPath = urlObj.pathname.replace('/api/v1', '');
 
@@ -413,19 +388,19 @@ export default {
 						'GET /api/v1/seo?url=<target>',
 						'GET /api/v1/http-manipulation?url=<target>',
 					],
-					rateLimit: { limit: RATE_LIMIT_MAX, window: '1 minute', remaining: rl.remaining },
-				}, 200, rlHeaders);
+					rateLimit: { limit: 1, window: '1 minute' },
+				});
 			}
 
 			// GET /api/v1/docs — full documentation
 			if (apiPath === '/docs') {
-				return apiJsonResponse(getAPIDocumentation(urlObj.origin), 200, rlHeaders);
+				return apiJsonResponse(getAPIDocumentation(urlObj.origin), 200);
 			}
 
 			// Ensure target URL
 			const target = urlObj.searchParams.get('url');
 			if (!target) {
-				return apiJsonResponse({ error: 'Missing required parameter: url', example: `${urlObj.origin}${urlObj.pathname}?url=https://example.com` }, 400, rlHeaders);
+				return apiJsonResponse({ error: 'Missing required parameter: url', example: `${urlObj.origin}${urlObj.pathname}?url=https://example.com` }, 400);
 			}
 
 			// Normalize target URL
@@ -495,7 +470,7 @@ export default {
 					if (categories) responseData.categories = categories;
 					if (page > 0) responseData.page = page;
 
-					return apiJsonResponse(responseData, 200, rlHeaders);
+					return apiJsonResponse(responseData, 200);
 				}
 
 				// --- Other endpoints: proxy to internal handlers ---
@@ -523,7 +498,7 @@ export default {
 						response = await handleHTTPManipulation(fakeReq);
 						break;
 					default:
-						return apiJsonResponse({ error: 'Unknown endpoint', available: ['/waf-checker', '/recon', '/security-headers', '/speedtest', '/seo', '/http-manipulation'] }, 404, rlHeaders);
+						return apiJsonResponse({ error: 'Unknown endpoint', available: ['/waf-checker', '/recon', '/security-headers', '/speedtest', '/seo', '/http-manipulation'] }, 404);
 				}
 
 				// Re-wrap the response with rate-limit headers and CORS
@@ -531,9 +506,9 @@ export default {
 				let jsonData: any;
 				try { jsonData = JSON.parse(body); } catch { jsonData = { raw: body }; }
 
-				return apiJsonResponse(jsonData, response.status, rlHeaders);
+				return apiJsonResponse(jsonData, response.status);
 			} catch (err: any) {
-				return apiJsonResponse({ error: 'Internal server error', message: err?.message || 'Unknown error' }, 500, rlHeaders);
+				return apiJsonResponse({ error: 'Internal server error', message: err?.message || 'Unknown error' }, 500);
 			}
 		}
 
@@ -561,7 +536,7 @@ function getAPIDocumentation(origin: string) {
 		version: '1.0',
 		baseUrl: `${origin}/api/v1`,
 		rateLimit: {
-			maxRequests: RATE_LIMIT_MAX,
+			maxRequests: 1,
 			window: '1 minute',
 			headers: {
 				'x-ratelimit-limit': 'Maximum requests per window',
