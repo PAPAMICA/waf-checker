@@ -686,7 +686,7 @@ async function handleApiCheckStream(request: Request): Promise<Response> {
 				// Cap custom payloads to prevent memory exhaustion
 				const MAX_CUSTOM_PAYLOADS = 500;
 				let totalCustom = 0;
-				for (const cat of Object.values(customPayloads)) {
+				for (const cat of Object.values(customPayloads!)) {
 					totalCustom += (cat.payloads?.length || 0);
 				}
 				if (totalCustom > MAX_CUSTOM_PAYLOADS) {
